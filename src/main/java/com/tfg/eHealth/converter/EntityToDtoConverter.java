@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class entityToDtoConverter {
+public class EntityToDtoConverter {
 
     public PacienteDto convert(Paciente paciente) {
         PacienteDto pacienteDTO = new PacienteDto();

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class dtoToEntityConverter {
+public class DtoToEntityConverter {
 
     public Medico convert(MedicoDto medicoDto) {
         Medico medico = new Medico();
