@@ -21,11 +21,11 @@ public class EntityToDtoConverter {
         pacienteDTO.setId(paciente.getId());
         pacienteDTO.setNombre(paciente.getNombre());
         pacienteDTO.setApellidos(paciente.getApellidos());
+        pacienteDTO.setFechaNacimiento(paciente.getFechaNacimiento());
         pacienteDTO.setDni(paciente.getDni());
         pacienteDTO.setNumSegSocial(paciente.getNumSegSocial());
         pacienteDTO.setTelefono(paciente.getTelefono());
         pacienteDTO.setEmail(paciente.getEmail());
-        pacienteDTO.setIdioma(paciente.getIdioma());
         pacienteDTO.setPeso(paciente.getPeso());
         pacienteDTO.setAltura(paciente.getAltura());
         pacienteDTO.setHistorialClinico(convert(paciente.getHistorialClinico()));
@@ -37,13 +37,19 @@ public class EntityToDtoConverter {
         medicoDTO.setId(medico.getId());
         medicoDTO.setNombre(medico.getNombre());
         medicoDTO.setApellidos(medico.getApellidos());
+        medicoDTO.setFechaNacimiento(medico.getFechaNacimiento());
         medicoDTO.setDni(medico.getDni());
         medicoDTO.setTelefono(medico.getTelefono());
         medicoDTO.setEmail(medico.getEmail());
         medicoDTO.setNumeroDeColegiado(medico.getNumeroDeColegiado());
         medicoDTO.setEspecialidad(medico.getEspecialidad());
-        medicoDTO.setIdiomas(medico.getIdiomas());
         medicoDTO.setActivo(medico.isActivo());
+        if (medico.getPacientesAsignados() != null) {
+            List<PacienteDto> pacientesDto = medico.getPacientesAsignados().stream()
+                    .map(this::convert)
+                    .collect(Collectors.toList());
+            medicoDTO.setPacientesAsignados(pacientesDto);
+        }
         return medicoDTO;
     }
 

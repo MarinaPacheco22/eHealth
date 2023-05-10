@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,12 +16,14 @@ public class PacienteDto {
     private Long id;
     private String nombre;
     private String apellidos;
+    private LocalDate fechaNacimiento;
     private String dni;
     private String numSegSocial;
     private String telefono;
     private String email;
-    private String idioma;
+    private String password;
     private Double peso;
     private Double altura;
     private HistorialClinicoDto historialClinico;
+    private MedicoDto medicoAsignado;
 }

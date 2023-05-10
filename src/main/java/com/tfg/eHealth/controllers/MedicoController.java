@@ -3,8 +3,6 @@ package com.tfg.eHealth.controllers;
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
 import com.tfg.eHealth.dtos.MedicoDto;
-import com.tfg.eHealth.dtos.MedicoDto;
-import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.services.MedicoService;
 import javassist.NotFoundException;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/medico")
 public class MedicoController {
@@ -53,6 +52,23 @@ public class MedicoController {
         ResponseEntity<?> toReturn;
         try {
             Medico medico = medicoService.getMedicoById(id);
+            MedicoDto appRes = entityToDtoConverter.convert(medico);
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/less-asignations")
+    public ResponseEntity<?> getMedicoWithLessAsignations() {
+        ResponseEntity<?> toReturn;
+        try {
+            Medico medico = medicoService.getMedicoWithLessAsignations();
             MedicoDto appRes = entityToDtoConverter.convert(medico);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {

@@ -16,13 +16,20 @@ public class DtoToEntityConverter {
         medico.setId(medicoDto.getId());
         medico.setNombre(medicoDto.getNombre());
         medico.setApellidos(medicoDto.getApellidos());
+        medico.setFechaNacimiento(medicoDto.getFechaNacimiento());
         medico.setDni(medicoDto.getDni());
         medico.setTelefono(medicoDto.getTelefono());
         medico.setEmail(medicoDto.getEmail());
+        medico.setPassword(medicoDto.getPassword());
         medico.setNumeroDeColegiado(medicoDto.getNumeroDeColegiado());
         medico.setEspecialidad(medicoDto.getEspecialidad());
-        medico.setIdiomas(medicoDto.getIdiomas());
         medico.setActivo(medicoDto.isActivo());
+        if (medicoDto.getPacientesAsignados() != null) {
+            List<Paciente> pacientes = medicoDto.getPacientesAsignados().stream()
+                    .map(this::convert)
+                    .collect(Collectors.toList());
+            medico.setPacientesAsignados(pacientes);
+        }
         return medico;
     }
 
@@ -31,14 +38,20 @@ public class DtoToEntityConverter {
         paciente.setId(pacienteDto.getId());
         paciente.setNombre(pacienteDto.getNombre());
         paciente.setApellidos(pacienteDto.getApellidos());
+        paciente.setFechaNacimiento(pacienteDto.getFechaNacimiento());
         paciente.setDni(pacienteDto.getDni());
         paciente.setNumSegSocial(pacienteDto.getNumSegSocial());
         paciente.setTelefono(pacienteDto.getTelefono());
         paciente.setEmail(pacienteDto.getEmail());
-        paciente.setIdioma(pacienteDto.getIdioma());
+        paciente.setPassword(pacienteDto.getPassword());
         paciente.setPeso(pacienteDto.getPeso());
         paciente.setAltura(pacienteDto.getAltura());
-        paciente.setHistorialClinico(convert(pacienteDto.getHistorialClinico()));
+        if (pacienteDto.getHistorialClinico() != null) {
+            paciente.setHistorialClinico(convert(pacienteDto.getHistorialClinico()));
+        }
+        if (pacienteDto.getMedicoAsignado() != null) {
+            paciente.setMedicoAsignado(convert(pacienteDto.getMedicoAsignado()));
+        }
         return paciente;
     }
 

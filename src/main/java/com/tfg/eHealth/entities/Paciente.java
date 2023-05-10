@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -24,6 +25,9 @@ public class Paciente {
     private String apellidos;
 
     @Column
+    private LocalDate fechaNacimiento;
+
+    @Column
     private String dni;
 
     @Column
@@ -36,7 +40,7 @@ public class Paciente {
     private String email;
 
     @Column
-    private String idioma;
+    private String password;
 
     @Column
     private Double peso;
@@ -47,6 +51,10 @@ public class Paciente {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "historial_clinico_id", referencedColumnName = "id")
     private HistorialClinico historialClinico;
+
+    @ManyToOne
+    @JoinColumn(name = "medico_asignado_id")
+    private Medico medicoAsignado;
 
 }
 

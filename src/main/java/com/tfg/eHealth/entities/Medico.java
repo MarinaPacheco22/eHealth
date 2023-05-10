@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,9 @@ public class Medico {
     private String apellidos;
 
     @Column
+    private LocalDate fechaNacimiento;
+
+    @Column
     private String dni;
 
     @Column
@@ -34,16 +38,19 @@ public class Medico {
     private String email;
 
     @Column
+    private String password;
+
+    @Column
     private String numeroDeColegiado;
 
     @Column
     private String especialidad;
 
-    @ElementCollection
-    private List<String> idiomas;
-
     @Column
     private boolean activo;
+
+    @OneToMany(mappedBy = "medicoAsignado")
+    private List<Paciente> pacientesAsignados;
 
 }
 

@@ -29,6 +29,10 @@ public class MedicoService {
         return byId.get();
     }
 
+    public Medico getMedicoWithLessAsignations() throws NotFoundException {
+        return medicoRepository.getMedicoWithLessAsignations();
+    }
+
     public void create(Medico toCreate) {
         medicoRepository.save(toCreate);
     }
