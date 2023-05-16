@@ -18,5 +18,5 @@ public class PruebaMedicaDto {
     private String nombre;
     private String diagnostico;
     private String tratamiento;
-    private HistorialClinicoDto historialClinico;
+    private HistorialClinicoInDto historialClinico;
 }

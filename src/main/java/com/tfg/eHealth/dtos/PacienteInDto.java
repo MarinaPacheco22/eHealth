@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @ToString
-public class PacienteDto {
+public class PacienteInDto {
 
     private Long id;
     private String nombre;
@@ -24,6 +24,6 @@ public class PacienteDto {
     private String password;
     private Double peso;
     private Double altura;
-    private HistorialClinicoDto historialClinico;
+    private HistorialClinicoInDto historialClinico;
     private MedicoDto medicoAsignado;
 }

@@ -1,8 +1,8 @@
 package com.tfg.eHealth.converter;
 
-import com.tfg.eHealth.dtos.HistorialClinicoDto;
+import com.tfg.eHealth.dtos.HistorialClinicoOutDto;
 import com.tfg.eHealth.dtos.MedicoDto;
-import com.tfg.eHealth.dtos.PacienteDto;
+import com.tfg.eHealth.dtos.PacienteInDto;
 import com.tfg.eHealth.dtos.PruebaMedicaDto;
 import com.tfg.eHealth.entities.HistorialClinico;
 import com.tfg.eHealth.entities.Medico;
@@ -16,20 +16,19 @@ import java.util.stream.Collectors;
 @Component
 public class EntityToDtoConverter {
 
-    public PacienteDto convert(Paciente paciente) {
-        PacienteDto pacienteDTO = new PacienteDto();
-        pacienteDTO.setId(paciente.getId());
-        pacienteDTO.setNombre(paciente.getNombre());
-        pacienteDTO.setApellidos(paciente.getApellidos());
-        pacienteDTO.setFechaNacimiento(paciente.getFechaNacimiento());
-        pacienteDTO.setDni(paciente.getDni());
-        pacienteDTO.setNumSegSocial(paciente.getNumSegSocial());
-        pacienteDTO.setTelefono(paciente.getTelefono());
-        pacienteDTO.setEmail(paciente.getEmail());
-        pacienteDTO.setPeso(paciente.getPeso());
-        pacienteDTO.setAltura(paciente.getAltura());
-        pacienteDTO.setHistorialClinico(convert(paciente.getHistorialClinico()));
-        return pacienteDTO;
+    public PacienteInDto convert(Paciente paciente) {
+        PacienteInDto pacienteInDTO = new PacienteInDto();
+        pacienteInDTO.setId(paciente.getId());
+        pacienteInDTO.setNombre(paciente.getNombre());
+        pacienteInDTO.setApellidos(paciente.getApellidos());
+        pacienteInDTO.setFechaNacimiento(paciente.getFechaNacimiento());
+        pacienteInDTO.setDni(paciente.getDni());
+        pacienteInDTO.setNumSegSocial(paciente.getNumSegSocial());
+        pacienteInDTO.setTelefono(paciente.getTelefono());
+        pacienteInDTO.setEmail(paciente.getEmail());
+        pacienteInDTO.setPeso(paciente.getPeso());
+        pacienteInDTO.setAltura(paciente.getAltura());
+        return pacienteInDTO;
     }
 
     public MedicoDto convert(Medico medico) {
@@ -45,7 +44,7 @@ public class EntityToDtoConverter {
         medicoDTO.setEspecialidad(medico.getEspecialidad());
         medicoDTO.setActivo(medico.isActivo());
         if (medico.getPacientesAsignados() != null) {
-            List<PacienteDto> pacientesDto = medico.getPacientesAsignados().stream()
+            List<PacienteInDto> pacientesDto = medico.getPacientesAsignados().stream()
                     .map(this::convert)
                     .collect(Collectors.toList());
             medicoDTO.setPacientesAsignados(pacientesDto);
@@ -53,10 +52,9 @@ public class EntityToDtoConverter {
         return medicoDTO;
     }
 
-    public HistorialClinicoDto convert(HistorialClinico historialClinico) {
-        HistorialClinicoDto dto = new HistorialClinicoDto();
+    public HistorialClinicoOutDto convert(HistorialClinico historialClinico) {
+        HistorialClinicoOutDto dto = new HistorialClinicoOutDto();
         dto.setId(historialClinico.getId());
-        dto.setFechaUltimaAtencion(historialClinico.getFechaUltimaAtencion());
         dto.setEnfermedadesDiagnosticadas(historialClinico.getEnfermedadesDiagnosticadas());
         dto.setIntervenciones(historialClinico.getIntervenciones());
         dto.setAlergias(historialClinico.getAlergias());

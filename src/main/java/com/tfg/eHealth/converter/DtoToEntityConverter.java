@@ -33,24 +33,24 @@ public class DtoToEntityConverter {
         return medico;
     }
 
-    public Paciente convert(PacienteDto pacienteDto) {
+    public Paciente convert(PacienteInDto pacienteInDto) {
         Paciente paciente = new Paciente();
-        paciente.setId(pacienteDto.getId());
-        paciente.setNombre(pacienteDto.getNombre());
-        paciente.setApellidos(pacienteDto.getApellidos());
-        paciente.setFechaNacimiento(pacienteDto.getFechaNacimiento());
-        paciente.setDni(pacienteDto.getDni());
-        paciente.setNumSegSocial(pacienteDto.getNumSegSocial());
-        paciente.setTelefono(pacienteDto.getTelefono());
-        paciente.setEmail(pacienteDto.getEmail());
-        paciente.setPassword(pacienteDto.getPassword());
-        paciente.setPeso(pacienteDto.getPeso());
-        paciente.setAltura(pacienteDto.getAltura());
-        if (pacienteDto.getHistorialClinico() != null) {
-            paciente.setHistorialClinico(convert(pacienteDto.getHistorialClinico()));
+        paciente.setId(pacienteInDto.getId());
+        paciente.setNombre(pacienteInDto.getNombre());
+        paciente.setApellidos(pacienteInDto.getApellidos());
+        paciente.setFechaNacimiento(pacienteInDto.getFechaNacimiento());
+        paciente.setDni(pacienteInDto.getDni());
+        paciente.setNumSegSocial(pacienteInDto.getNumSegSocial());
+        paciente.setTelefono(pacienteInDto.getTelefono());
+        paciente.setEmail(pacienteInDto.getEmail());
+        paciente.setPassword(pacienteInDto.getPassword());
+        paciente.setPeso(pacienteInDto.getPeso());
+        paciente.setAltura(pacienteInDto.getAltura());
+        if (pacienteInDto.getHistorialClinico() != null) {
+            paciente.setHistorialClinico(convert(pacienteInDto.getHistorialClinico()));
         }
-        if (pacienteDto.getMedicoAsignado() != null) {
-            paciente.setMedicoAsignado(convert(pacienteDto.getMedicoAsignado()));
+        if (pacienteInDto.getMedicoAsignado() != null) {
+            paciente.setMedicoAsignado(convert(pacienteInDto.getMedicoAsignado()));
         }
         return paciente;
     }
@@ -66,21 +66,37 @@ public class DtoToEntityConverter {
         return pruebaMedica;
     }
 
-    public HistorialClinico convert(HistorialClinicoDto historialClinicoDto) {
+    public HistorialClinico convert(HistorialClinicoInDto historialClinicoInDto) {
         HistorialClinico historialClinico = new HistorialClinico();
-        historialClinico.setId(historialClinicoDto.getId());
-        historialClinico.setFechaUltimaAtencion(historialClinicoDto.getFechaUltimaAtencion());
-        historialClinico.setEnfermedadesDiagnosticadas(historialClinicoDto.getEnfermedadesDiagnosticadas());
-        historialClinico.setIntervenciones(historialClinicoDto.getIntervenciones());
-        historialClinico.setAlergias(historialClinicoDto.getAlergias());
-        historialClinico.setMedicacionActual(historialClinicoDto.getMedicacionActual());
-        if (historialClinicoDto.getPruebasMedicas() != null) {
-            List<PruebaMedica> pruebas = historialClinicoDto.getPruebasMedicas().stream()
-                    .map(this::convert)
-                    .collect(Collectors.toList());
-            historialClinico.setPruebasMedicas(pruebas);
-        }
-        historialClinico.setPaciente(convert(historialClinicoDto.getPaciente()));
+        historialClinico.setId(historialClinicoInDto.getId());
+        historialClinico.setEnfermedadesDiagnosticadas(historialClinicoInDto.getEnfermedadesDiagnosticadas());
+        historialClinico.setIntervenciones(historialClinicoInDto.getIntervenciones());
+        historialClinico.setAlergias(historialClinicoInDto.getAlergias());
+        historialClinico.setMedicacionActual(historialClinicoInDto.getMedicacionActual());
+        return historialClinico;
+    }
+
+    public Paciente convert(PacienteOutDto pacienteOutDto) {
+        Paciente paciente = new Paciente();
+        paciente.setId(pacienteOutDto.getId());
+        paciente.setNombre(pacienteOutDto.getNombre());
+        paciente.setApellidos(pacienteOutDto.getApellidos());
+        paciente.setFechaNacimiento(pacienteOutDto.getFechaNacimiento());
+        paciente.setDni(pacienteOutDto.getDni());
+        paciente.setNumSegSocial(pacienteOutDto.getNumSegSocial());
+        paciente.setTelefono(pacienteOutDto.getTelefono());
+        paciente.setEmail(pacienteOutDto.getEmail());
+        paciente.setPassword(pacienteOutDto.getPassword());
+        paciente.setPeso(pacienteOutDto.getPeso());
+        paciente.setAltura(pacienteOutDto.getAltura());
+        return paciente;
+    }
+
+    public HistorialClinico convertToHistorialClinico(PacienteOutDto pacienteOutDto) {
+        HistorialClinico historialClinico = new HistorialClinico();
+        historialClinico.setEnfermedadesDiagnosticadas(pacienteOutDto.getEnfermedadesDiagnosticadas());
+        historialClinico.setIntervenciones(pacienteOutDto.getIntervenciones());
+        historialClinico.setAlergias(pacienteOutDto.getAlergias());
         return historialClinico;
     }
 }

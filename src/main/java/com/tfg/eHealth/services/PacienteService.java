@@ -1,7 +1,11 @@
 package com.tfg.eHealth.services;
 
+import com.tfg.eHealth.converter.DtoToEntityConverter;
+import com.tfg.eHealth.dtos.PacienteOutDto;
+import com.tfg.eHealth.entities.HistorialClinico;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.Paciente;
+import com.tfg.eHealth.repositories.HistorialClinicoRepository;
 import com.tfg.eHealth.repositories.MedicoRepository;
 import com.tfg.eHealth.repositories.PacienteRepository;
 import javassist.NotFoundException;
@@ -20,6 +24,12 @@ public class PacienteService {
     @Autowired
     MedicoRepository medicoRepository;
 
+    @Autowired
+    HistorialClinicoRepository historialClinicoRepository;
+
+    @Autowired
+    DtoToEntityConverter dtoToEntityConverter;
+
     public List<Paciente> getAllPacientes() {
         return pacienteRepository.findAll();
     }
@@ -34,11 +44,19 @@ public class PacienteService {
         return byId.get();
     }
 
-    public void create(Paciente toCreate) {
-        pacienteRepository.save(toCreate);
+    public void create(PacienteOutDto outDto) {
+        Paciente paciente = dtoToEntityConverter.convert(outDto);
+        Medico medicoAsignado = medicoRepository.getMedicoWithLessAsignations();
+        paciente.setMedicoAsignado(medicoAsignado);
+        Paciente pacienteCreated = pacienteRepository.save(paciente);
+        HistorialClinico historialClinico = dtoToEntityConverter.convertToHistorialClinico(outDto);
+        historialClinico.setPaciente(pacienteCreated);
+        HistorialClinico historialClinicoCreated = historialClinicoRepository.save(historialClinico);
+        pacienteCreated.setHistorialClinico(historialClinicoCreated);
+        pacienteRepository.save(pacienteCreated);
     }
 
-    public void update(Paciente toUpdate, Long id) throws NotFoundException {
+    public Paciente update(Paciente toUpdate, Long id) throws NotFoundException {
         Optional<Paciente> byId = pacienteRepository.findById(id);
 
         if (byId.isEmpty()) {
@@ -46,7 +64,7 @@ public class PacienteService {
         }
 
         toUpdate.setId(id);
-        pacienteRepository.save(toUpdate);
+        return pacienteRepository.save(toUpdate);
     }
 
     public void deletePaciente(Long id) throws NotFoundException {

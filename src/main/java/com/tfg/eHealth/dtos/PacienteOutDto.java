@@ -12,18 +12,21 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-public class MedicoDto {
+public class PacienteOutDto {
 
     private Long id;
     private String nombre;
     private String apellidos;
     private LocalDate fechaNacimiento;
     private String dni;
+    private String numSegSocial;
     private String telefono;
     private String email;
     private String password;
-    private String numeroDeColegiado;
-    private String especialidad;
-    private boolean activo;
-    private List<PacienteInDto> pacientesAsignados;
+    private Double peso;
+    private Double altura;
+    private List<String> enfermedadesDiagnosticadas;
+    private List<String> intervenciones;
+    private List<String> alergias;
+    private Long medicoAsignado;
 }

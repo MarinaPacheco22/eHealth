@@ -2,11 +2,12 @@ package com.tfg.eHealth.controllers;
 
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
-import com.tfg.eHealth.dtos.HistorialClinicoDto;
+import com.tfg.eHealth.dtos.HistorialClinicoInDto;
+import com.tfg.eHealth.dtos.HistorialClinicoOutDto;
 import com.tfg.eHealth.entities.HistorialClinico;
 import com.tfg.eHealth.services.HistorialClinicoService;
+import com.tfg.eHealth.services.PacienteService;
 import javassist.NotFoundException;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class HistorialClinicoController {
     private HistorialClinicoService historialClinicoService;
 
     @Autowired
+    private PacienteService pacienteService;
+
+    @Autowired
     private EntityToDtoConverter entityToDtoConverter;
 
     @Autowired
@@ -40,7 +44,7 @@ public class HistorialClinicoController {
         if (historialesClinicos.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            List<HistorialClinicoDto> appRes = historialesClinicos.stream()
+            List<HistorialClinicoOutDto> appRes = historialesClinicos.stream()
                     .map(entityToDtoConverter::convert)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
@@ -53,7 +57,7 @@ public class HistorialClinicoController {
         ResponseEntity<?> toReturn;
         try {
             HistorialClinico historialClinico = historialClinicoService.getHistorialClinicoById(id);
-            HistorialClinicoDto appRes = entityToDtoConverter.convert(historialClinico);
+            HistorialClinicoOutDto appRes = entityToDtoConverter.convert(historialClinico);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -66,11 +70,10 @@ public class HistorialClinicoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody HistorialClinicoDto historialClinicoDto) {
+    public ResponseEntity<?> create(@RequestBody HistorialClinicoOutDto historialClinicoOutDto) {
         ResponseEntity<?> toReturn;
         try {
-            HistorialClinico historialClinico = dtoToEntityConverter.convert(historialClinicoDto);
-            historialClinicoService.create(historialClinico);
+            historialClinicoService.create(historialClinicoOutDto);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             logger.warn(e.getMessage(), e);
@@ -83,10 +86,10 @@ public class HistorialClinicoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody HistorialClinicoDto historialClinicoDto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody HistorialClinicoInDto historialClinicoInDto) {
         ResponseEntity<?> toReturn;
         try {
-            HistorialClinico historialClinico = dtoToEntityConverter.convert(historialClinicoDto);
+            HistorialClinico historialClinico = dtoToEntityConverter.convert(historialClinicoInDto);
             historialClinicoService.update(historialClinico, id);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (NotFoundException e) {

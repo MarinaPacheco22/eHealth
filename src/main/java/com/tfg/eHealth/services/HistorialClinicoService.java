@@ -1,6 +1,12 @@
 package com.tfg.eHealth.services;
 
+import com.tfg.eHealth.converter.DtoToEntityConverter;
+import com.tfg.eHealth.converter.EntityToDtoConverter;
+import com.tfg.eHealth.dtos.HistorialClinicoInDto;
+import com.tfg.eHealth.dtos.HistorialClinicoOutDto;
+import com.tfg.eHealth.dtos.PacienteInDto;
 import com.tfg.eHealth.entities.HistorialClinico;
+import com.tfg.eHealth.entities.Paciente;
 import com.tfg.eHealth.repositories.HistorialClinicoRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +20,15 @@ public class HistorialClinicoService {
 
     @Autowired
     HistorialClinicoRepository historialClinicoRepository;
+
+    @Autowired
+    PacienteService pacienteService;
+
+    @Autowired
+    EntityToDtoConverter entityToDtoConverter;
+
+    @Autowired
+    DtoToEntityConverter dtoToEntityConverter;
 
     public List<HistorialClinico> getAllHistorialesClinicos() {
         return historialClinicoRepository.findAll();
@@ -29,7 +44,13 @@ public class HistorialClinicoService {
         return byId.get();
     }
 
-    public void create(HistorialClinico toCreate) {
+    public void create(HistorialClinicoOutDto outDto) throws NotFoundException {
+        Paciente pacienteByID = pacienteService.getPacienteById(outDto.getPacienteId());
+        PacienteInDto pacienteInDto = entityToDtoConverter.convert(pacienteByID);
+        HistorialClinicoInDto inDto = convert(outDto);
+        inDto.setPaciente(pacienteInDto);
+        HistorialClinico toCreate = dtoToEntityConverter.convert(inDto);
+
         historialClinicoRepository.save(toCreate);
     }
 
@@ -52,5 +73,14 @@ public class HistorialClinicoService {
         }
 
         historialClinicoRepository.delete(byId.get());
+    }
+
+    private HistorialClinicoInDto convert(HistorialClinicoOutDto outDto) {
+        HistorialClinicoInDto inDto = new HistorialClinicoInDto();
+        inDto.setId(outDto.getId());
+        inDto.setAlergias(outDto.getAlergias());
+        inDto.setIntervenciones(outDto.getIntervenciones());
+        inDto.setEnfermedadesDiagnosticadas(outDto.getEnfermedadesDiagnosticadas());
+        return inDto;
     }
 }

@@ -19,9 +19,6 @@ public class HistorialClinico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private LocalDate fechaUltimaAtencion;
-
     @ElementCollection
     private List<String> enfermedadesDiagnosticadas;
 
