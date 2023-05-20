@@ -10,6 +10,7 @@ import com.tfg.eHealth.repositories.MedicoRepository;
 import com.tfg.eHealth.repositories.PacienteRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +45,25 @@ public class PacienteService {
         return byId.get();
     }
 
+    public Paciente getPacienteByEmail(String email) throws NotFoundException {
+        Optional<Paciente> byEmail = pacienteRepository.findByEmail(email);
+
+        if (byEmail.isEmpty()) {
+            throw new NotFoundException("Usuario con email <" + email + "> no encontrado.");
+        }
+
+        return byEmail.get();
+    }
+
     public void create(PacienteOutDto outDto) {
+        String email = outDto.getEmail();
+        Optional<Medico> medicoByEmail= medicoRepository.findByEmail(email);
+        Optional<Paciente> pacienteByEmail = pacienteRepository.findByEmail(email);
+        if (medicoByEmail.isPresent() || pacienteByEmail.isPresent()) {
+            throw new DuplicateKeyException("Este email ya está registrado.");
+        }
         Paciente paciente = dtoToEntityConverter.convert(outDto);
-        Medico medicoAsignado = medicoRepository.getMedicoWithLessAsignations();
+        Medico medicoAsignado = medicoRepository.getMedicoFamiliarWithLessAsignations();
         paciente.setMedicoAsignado(medicoAsignado);
         Paciente pacienteCreated = pacienteRepository.save(paciente);
         HistorialClinico historialClinico = dtoToEntityConverter.convertToHistorialClinico(outDto);

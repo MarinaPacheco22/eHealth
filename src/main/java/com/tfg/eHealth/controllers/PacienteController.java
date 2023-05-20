@@ -10,6 +10,7 @@ import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +66,23 @@ public class PacienteController {
         return toReturn;
     }
 
+    @GetMapping("/by-email/{email}")
+    public ResponseEntity<?> getPacienteByEmail(@PathVariable String email) {
+        ResponseEntity<?> toReturn;
+        try {
+            Paciente paciente = pacienteService.getPacienteByEmail(email);
+            PacienteInDto appRes = entityToDtoConverter.convert(paciente);
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
     @GetMapping("/by-medico/{id}")
     public ResponseEntity<?> getPacientesByMedicoId(@PathVariable Long id) {
         ResponseEntity<?> toReturn;
@@ -97,6 +115,9 @@ public class PacienteController {
         } catch (IllegalArgumentException e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (DuplicateKeyException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

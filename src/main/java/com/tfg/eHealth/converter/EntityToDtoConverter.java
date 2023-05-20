@@ -1,9 +1,6 @@
 package com.tfg.eHealth.converter;
 
-import com.tfg.eHealth.dtos.HistorialClinicoOutDto;
-import com.tfg.eHealth.dtos.MedicoDto;
-import com.tfg.eHealth.dtos.PacienteInDto;
-import com.tfg.eHealth.dtos.PruebaMedicaDto;
+import com.tfg.eHealth.dtos.*;
 import com.tfg.eHealth.entities.HistorialClinico;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.Paciente;
@@ -28,6 +25,7 @@ public class EntityToDtoConverter {
         pacienteInDTO.setEmail(paciente.getEmail());
         pacienteInDTO.setPeso(paciente.getPeso());
         pacienteInDTO.setAltura(paciente.getAltura());
+        pacienteInDTO.setPassword(paciente.getPassword());
         return pacienteInDTO;
     }
 
@@ -40,6 +38,7 @@ public class EntityToDtoConverter {
         medicoDTO.setDni(medico.getDni());
         medicoDTO.setTelefono(medico.getTelefono());
         medicoDTO.setEmail(medico.getEmail());
+        medicoDTO.setPassword(medico.getPassword());
         medicoDTO.setNumeroDeColegiado(medico.getNumeroDeColegiado());
         medicoDTO.setEspecialidad(medico.getEspecialidad());
         medicoDTO.setActivo(medico.isActivo());
