@@ -14,5 +14,6 @@ import java.util.Optional;
 public interface PacienteRepository extends JpaRepository<Paciente, Long>, JpaSpecificationExecutor<Paciente> {
     List<Paciente> findByMedicoAsignado(Medico medicoAsignado);
     Optional<Paciente> findByEmail(String email);
+    Paciente getById(long id);
 
 }

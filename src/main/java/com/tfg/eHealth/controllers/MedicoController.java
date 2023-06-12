@@ -3,6 +3,8 @@ package com.tfg.eHealth.controllers;
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
 import com.tfg.eHealth.dtos.MedicoDto;
+import com.tfg.eHealth.dtos.MedicoOutDto;
+import com.tfg.eHealth.dtos.PacienteOutDto;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.services.MedicoService;
 import javassist.NotFoundException;
@@ -34,14 +36,29 @@ public class MedicoController {
     private DtoToEntityConverter dtoToEntityConverter;
 
     @GetMapping
-    public ResponseEntity<?> getMedicoList() {
+    public ResponseEntity<?> getMedicosList() {
         ResponseEntity<?> toReturn;
         List<Medico> medicos = medicoService.getAllMedicos();
         if (medicos.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             List<MedicoDto> appRes = medicos.stream()
-                    .map(entityToDtoConverter::convert)
+                    .map(entityToDtoConverter::convertIn)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/desactivated")
+    public ResponseEntity<?> getDesactivatedMedicosList() {
+        ResponseEntity<?> toReturn;
+        List<Medico> medicos = medicoService.getDesactivatedMedicos();
+        if (medicos.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<MedicoDto> appRes = medicos.stream()
+                    .map(entityToDtoConverter::convertIn)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }
@@ -53,7 +70,7 @@ public class MedicoController {
         ResponseEntity<?> toReturn;
         try {
             Medico medico = medicoService.getMedicoById(id);
-            MedicoDto appRes = entityToDtoConverter.convert(medico);
+            MedicoDto appRes = entityToDtoConverter.convertIn(medico);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -70,7 +87,7 @@ public class MedicoController {
         ResponseEntity<?> toReturn;
         try {
             Medico medico = medicoService.getMedicoByEmail(email);
-            MedicoDto appRes = entityToDtoConverter.convert(medico);
+            MedicoDto appRes = entityToDtoConverter.convertIn(medico);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -87,7 +104,7 @@ public class MedicoController {
         ResponseEntity<?> toReturn;
         try {
             Medico medico = medicoService.getMedicoWithLessAsignations();
-            MedicoDto appRes = entityToDtoConverter.convert(medico);
+            MedicoDto appRes = entityToDtoConverter.convertIn(medico);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -145,6 +162,41 @@ public class MedicoController {
         try {
             medicoService.deleteMedico(id);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<?> activate(@PathVariable Long id) {
+        ResponseEntity<?> toReturn;
+        try {
+            medicoService.activate(id);
+            toReturn = new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody String newPassword) {
+        ResponseEntity<?> toReturn;
+        try {
+            MedicoDto appRes = medicoService.changePassword(id, newPassword);
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.CREATED);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

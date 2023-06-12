@@ -42,7 +42,7 @@ public class PacienteController {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             List<PacienteInDto> appRes = pacientes.stream()
-                    .map(entityToDtoConverter::convert)
+                    .map(entityToDtoConverter::convertIn)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }
@@ -54,7 +54,7 @@ public class PacienteController {
         ResponseEntity<?> toReturn;
         try {
             Paciente paciente = pacienteService.getPacienteById(id);
-            PacienteInDto appRes = entityToDtoConverter.convert(paciente);
+            PacienteOutDto appRes = entityToDtoConverter.convertOut(paciente);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -71,7 +71,7 @@ public class PacienteController {
         ResponseEntity<?> toReturn;
         try {
             Paciente paciente = pacienteService.getPacienteByEmail(email);
-            PacienteInDto appRes = entityToDtoConverter.convert(paciente);
+            PacienteOutDto appRes = entityToDtoConverter.convertOut(paciente);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -88,8 +88,8 @@ public class PacienteController {
         ResponseEntity<?> toReturn;
         try {
             List<Paciente> pacientes = pacienteService.getPacienteByMedicoId(id);
-            List<PacienteInDto> appRes = pacientes.stream()
-                    .map(entityToDtoConverter::convert)
+            List<PacienteOutDto> appRes = pacientes.stream()
+                    .map(entityToDtoConverter::convertOut)
                     .collect(Collectors.toList());
             if (pacientes.isEmpty()) {
                 toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -126,13 +126,12 @@ public class PacienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PacienteInDto pacienteInDto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PacienteOutDto pacienteOutDto) {
         ResponseEntity<?> toReturn;
         try {
-            Paciente paciente = dtoToEntityConverter.convert(pacienteInDto);
-            Paciente appRes = pacienteService.update(paciente, id);
-            appRes.setId(id);
-            toReturn = new ResponseEntity<>(appRes, HttpStatus.CREATED);
+            Paciente paciente = dtoToEntityConverter.convert(pacienteOutDto);
+            pacienteService.update(paciente);
+            toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -152,6 +151,22 @@ public class PacienteController {
         try {
             pacienteService.deletePaciente(id);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody String newPassword) {
+        ResponseEntity<?> toReturn;
+        try {
+            PacienteOutDto appRes = pacienteService.changePassword(id, newPassword);
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.CREATED);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

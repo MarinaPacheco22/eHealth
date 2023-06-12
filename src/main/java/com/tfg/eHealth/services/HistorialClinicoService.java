@@ -12,6 +12,9 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +33,9 @@ public class HistorialClinicoService {
     @Autowired
     DtoToEntityConverter dtoToEntityConverter;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public List<HistorialClinico> getAllHistorialesClinicos() {
         return historialClinicoRepository.findAll();
     }
@@ -46,7 +52,7 @@ public class HistorialClinicoService {
 
     public void create(HistorialClinicoOutDto outDto) throws NotFoundException {
         Paciente pacienteByID = pacienteService.getPacienteById(outDto.getPacienteId());
-        PacienteInDto pacienteInDto = entityToDtoConverter.convert(pacienteByID);
+        PacienteInDto pacienteInDto = entityToDtoConverter.convertIn(pacienteByID);
         HistorialClinicoInDto inDto = convert(outDto);
         inDto.setPaciente(pacienteInDto);
         HistorialClinico toCreate = dtoToEntityConverter.convert(inDto);
@@ -54,15 +60,14 @@ public class HistorialClinicoService {
         historialClinicoRepository.save(toCreate);
     }
 
-    public void update(HistorialClinico toUpdate, Long id) throws NotFoundException {
-        Optional<HistorialClinico> byId = historialClinicoRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            throw new NotFoundException("Historial clinico con id <" + id + "> no encontrado.");
-        }
-
-        toUpdate.setId(id);
-        historialClinicoRepository.save(toUpdate);
+    @Transactional
+    public void update(HistorialClinico toUpdate) throws NotFoundException {
+        HistorialClinico byId = historialClinicoRepository.getById(toUpdate.getId());
+        byId.setAlergias(toUpdate.getAlergias());
+        byId.setIntervenciones(toUpdate.getIntervenciones());
+        byId.setEnfermedadesDiagnosticadas(toUpdate.getEnfermedadesDiagnosticadas());
+        byId.setMedicacionActual(toUpdate.getMedicacionActual());
+        entityManager.merge(toUpdate);
     }
 
     public void deleteHistorialClinico(Long id) throws NotFoundException {
@@ -82,5 +87,15 @@ public class HistorialClinicoService {
         inDto.setIntervenciones(outDto.getIntervenciones());
         inDto.setEnfermedadesDiagnosticadas(outDto.getEnfermedadesDiagnosticadas());
         return inDto;
+    }
+
+    public HistorialClinico getHistorialClinicoByPacienteId(Long id) throws NotFoundException {
+        Optional<HistorialClinico> byId = historialClinicoRepository.findByPaciente_Id(id);
+
+        if (byId.isEmpty()) {
+            throw new NotFoundException("No hay historial clínico asociado al paciente con id <" + id + ">.");
+        }
+
+        return byId.get();
     }
 }

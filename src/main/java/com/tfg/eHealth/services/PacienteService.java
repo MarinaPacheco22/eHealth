@@ -1,6 +1,7 @@
 package com.tfg.eHealth.services;
 
 import com.tfg.eHealth.converter.DtoToEntityConverter;
+import com.tfg.eHealth.converter.EntityToDtoConverter;
 import com.tfg.eHealth.dtos.PacienteOutDto;
 import com.tfg.eHealth.entities.HistorialClinico;
 import com.tfg.eHealth.entities.Medico;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,12 @@ public class PacienteService {
 
     @Autowired
     DtoToEntityConverter dtoToEntityConverter;
+
+    @Autowired
+    EntityToDtoConverter entityToDtoConverter;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<Paciente> getAllPacientes() {
         return pacienteRepository.findAll();
@@ -63,8 +73,8 @@ public class PacienteService {
             throw new DuplicateKeyException("Este email ya está registrado.");
         }
         Paciente paciente = dtoToEntityConverter.convert(outDto);
-        Medico medicoAsignado = medicoRepository.getMedicoFamiliarWithLessAsignations();
-        paciente.setMedicoAsignado(medicoAsignado);
+        List<Medico> medicoAsignado = medicoRepository.getMedicoFamiliarWithLessAsignations();
+        paciente.setMedicoAsignado(medicoAsignado.get(0));
         Paciente pacienteCreated = pacienteRepository.save(paciente);
         HistorialClinico historialClinico = dtoToEntityConverter.convertToHistorialClinico(outDto);
         historialClinico.setPaciente(pacienteCreated);
@@ -73,15 +83,20 @@ public class PacienteService {
         pacienteRepository.save(pacienteCreated);
     }
 
-    public Paciente update(Paciente toUpdate, Long id) throws NotFoundException {
-        Optional<Paciente> byId = pacienteRepository.findById(id);
+    @Transactional
+    public void update(Paciente toUpdate) throws NotFoundException {
+        Paciente byId = pacienteRepository.getById(toUpdate.getId());
 
-        if (byId.isEmpty()) {
-            throw new NotFoundException("Paciente con id <" + id + "> no encontrado.");
-        }
-
-        toUpdate.setId(id);
-        return pacienteRepository.save(toUpdate);
+        byId.setNombre(toUpdate.getNombre());
+        byId.setApellidos(toUpdate.getApellidos());
+        byId.setDni(toUpdate.getDni());
+        byId.setNumSegSocial(toUpdate.getNumSegSocial());
+        byId.setTelefono(toUpdate.getTelefono());
+        byId.setEmail(toUpdate.getEmail());
+        byId.setAltura(toUpdate.getAltura());
+        byId.setPeso(toUpdate.getPeso());
+        byId.setFechaNacimiento(toUpdate.getFechaNacimiento());
+        entityManager.merge(byId);
     }
 
     public void deletePaciente(Long id) throws NotFoundException {
@@ -102,5 +117,19 @@ public class PacienteService {
         }
 
         return pacienteRepository.findByMedicoAsignado(medico.get());
+    }
+
+    @Transactional
+    public PacienteOutDto changePassword(Long id, String newPassword) throws NotFoundException {
+        Optional<Paciente> paciente = pacienteRepository.findById(id);
+
+        if (paciente.isEmpty()) {
+            throw new NotFoundException("Paciente con id <" + id + "> no encontrado.");
+        }
+
+        paciente.get().setPassword(newPassword);
+        entityManager.merge(paciente.get());
+
+        return entityToDtoConverter.convertOut(paciente.get());
     }
 }

@@ -3,13 +3,18 @@ package com.tfg.eHealth.converter;
 import com.tfg.eHealth.dtos.*;
 import com.tfg.eHealth.entities.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class DtoToEntityConverter {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Medico convert(MedicoDto medicoDto) {
         Medico medico = new Medico();
@@ -74,6 +79,38 @@ public class DtoToEntityConverter {
         historialClinico.setAlergias(historialClinicoInDto.getAlergias());
         historialClinico.setMedicacionActual(historialClinicoInDto.getMedicacionActual());
         return historialClinico;
+    }
+
+    public HistorialClinico convert(HistorialClinicoOutDto historialClinicoOutDto) {
+        HistorialClinico historialClinico = new HistorialClinico();
+        historialClinico.setId(historialClinicoOutDto.getId());
+        historialClinico.setEnfermedadesDiagnosticadas(historialClinicoOutDto.getEnfermedadesDiagnosticadas());
+        historialClinico.setIntervenciones(historialClinicoOutDto.getIntervenciones());
+        historialClinico.setAlergias(historialClinicoOutDto.getAlergias());
+        historialClinico.setMedicacionActual(historialClinicoOutDto.getMedicacionActual());
+        return historialClinico;
+    }
+
+    public SolicitudConsulta convert(SolicitudConsultaInDto solicitudConsultaInDto) {
+        SolicitudConsulta solicitudConsulta = new SolicitudConsulta();
+        solicitudConsulta.setId(solicitudConsultaInDto.getId());
+        solicitudConsulta.setDescripcion(solicitudConsultaInDto.getDescripcion());
+        solicitudConsulta.setFecha(solicitudConsultaInDto.getFecha());
+        if (solicitudConsultaInDto.getArchivos() != null) {
+            List<byte[]> archivos = solicitudConsultaInDto.getArchivos().stream()
+                    .map(archivo -> {
+                        try {
+                            return archivo.getBytes();
+                        } catch (IOException e) {
+                            logger.error("Error al procesar el archivo." + e.getMessage());
+                            return null;
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            solicitudConsulta.setArchivos(archivos);
+        }
+        return solicitudConsulta;
     }
 
     public Paciente convert(PacienteOutDto pacienteOutDto) {

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -55,6 +56,9 @@ public class Paciente {
     @ManyToOne
     @JoinColumn(name = "medico_asignado_id")
     private Medico medicoAsignado;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<SolicitudConsulta> solicitudesConsulta;
 
 }
 

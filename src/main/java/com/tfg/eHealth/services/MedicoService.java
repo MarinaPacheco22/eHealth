@@ -1,5 +1,9 @@
 package com.tfg.eHealth.services;
 
+import com.tfg.eHealth.converter.EntityToDtoConverter;
+import com.tfg.eHealth.dtos.MedicoDto;
+import com.tfg.eHealth.dtos.MedicoOutDto;
+import com.tfg.eHealth.dtos.PacienteOutDto;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.Paciente;
 import com.tfg.eHealth.repositories.MedicoRepository;
@@ -8,7 +12,11 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.TransactionScoped;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +28,12 @@ public class MedicoService {
 
     @Autowired
     PacienteRepository pacienteRepository;
+
+    @Autowired
+    EntityToDtoConverter entityToDtoConverter;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<Medico> getAllMedicos() {
         return medicoRepository.findAll();
@@ -46,7 +60,7 @@ public class MedicoService {
     }
 
     public Medico getMedicoWithLessAsignations() throws NotFoundException {
-        return medicoRepository.getMedicoFamiliarWithLessAsignations();
+        return medicoRepository.getMedicoFamiliarWithLessAsignations().get(0);
     }
 
     public void create(Medico toCreate) {
@@ -78,5 +92,35 @@ public class MedicoService {
         }
 
         medicoRepository.delete(byId.get());
+    }
+
+    public void activate(Long id) throws NotFoundException {
+        Optional<Medico> byId = medicoRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            throw new NotFoundException("Medico con id <" + id + "> no existe.");
+        }
+
+        byId.get().setActivo(true);
+        medicoRepository.save(byId.get());
+
+    }
+
+    public List<Medico> getDesactivatedMedicos() {
+        return medicoRepository.getAllByActivoFalse();
+    }
+
+    @Transactional
+    public MedicoDto changePassword(Long id, String newPassword) throws NotFoundException {
+        Optional<Medico> medico = medicoRepository.findById(id);
+
+        if (medico.isEmpty()) {
+            throw new NotFoundException("Medico con id <" + id + "> no encontrado.");
+        }
+
+        medico.get().setPassword(newPassword);
+        entityManager.merge(medico.get());
+
+        return entityToDtoConverter.convertIn(medico.get());
     }
 }

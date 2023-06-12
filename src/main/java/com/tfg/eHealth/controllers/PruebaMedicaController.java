@@ -3,8 +3,6 @@ package com.tfg.eHealth.controllers;
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
 import com.tfg.eHealth.dtos.PruebaMedicaDto;
-import com.tfg.eHealth.dtos.PruebaMedicaDto;
-import com.tfg.eHealth.entities.PruebaMedica;
 import com.tfg.eHealth.entities.PruebaMedica;
 import com.tfg.eHealth.services.PruebaMedicaService;
 import javassist.NotFoundException;
@@ -42,7 +40,7 @@ public class PruebaMedicaController {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             List<PruebaMedicaDto> appRes = pruebasMedicas.stream()
-                    .map(entityToDtoConverter::convert)
+                    .map(entityToDtoConverter::convertIn)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }
@@ -54,7 +52,7 @@ public class PruebaMedicaController {
         ResponseEntity<?> toReturn;
         try {
             PruebaMedica pruebaMedica = pruebaMedicaService.getPruebaMedicaById(id);
-            PruebaMedicaDto appRes = entityToDtoConverter.convert(pruebaMedica);
+            PruebaMedicaDto appRes = entityToDtoConverter.convertIn(pruebaMedica);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
