@@ -1,6 +1,8 @@
 package com.tfg.eHealth.entities;
 
 
+import com.tfg.eHealth.vo.EstadoEnum;
+import com.tfg.eHealth.vo.SexoEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,6 +50,9 @@ public class Paciente {
 
     @Column
     private Double altura;
+
+    @Column
+    private SexoEnum sexo;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "historial_clinico_id", referencedColumnName = "id")

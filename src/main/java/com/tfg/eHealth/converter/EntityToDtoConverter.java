@@ -30,6 +30,7 @@ public class EntityToDtoConverter {
         pacienteInDTO.setEmail(paciente.getEmail());
         pacienteInDTO.setPeso(paciente.getPeso());
         pacienteInDTO.setAltura(paciente.getAltura());
+        pacienteInDTO.setSexo(paciente.getSexo().name());
         pacienteInDTO.setPassword(paciente.getPassword());
         return pacienteInDTO;
     }
@@ -46,6 +47,7 @@ public class EntityToDtoConverter {
         pacienteOutDTO.setEmail(paciente.getEmail());
         pacienteOutDTO.setPeso(paciente.getPeso());
         pacienteOutDTO.setAltura(paciente.getAltura());
+        pacienteOutDTO.setSexo(paciente.getSexo().name());
         pacienteOutDTO.setPassword(paciente.getPassword());
         if (paciente.getMedicoAsignado() != null) {
             pacienteOutDTO.setMedicoAsignado(paciente.getMedicoAsignado().getId());
@@ -59,6 +61,7 @@ public class EntityToDtoConverter {
         medicoDTO.setNombre(medico.getNombre());
         medicoDTO.setApellidos(medico.getApellidos());
         medicoDTO.setFechaNacimiento(medico.getFechaNacimiento());
+        medicoDTO.setSexo(medico.getSexo().name());
         medicoDTO.setDni(medico.getDni());
         medicoDTO.setTelefono(medico.getTelefono());
         medicoDTO.setEmail(medico.getEmail());
@@ -142,6 +145,7 @@ public class EntityToDtoConverter {
         outDto.setNombre(medico.getNombre());
         outDto.setApellidos(medico.getApellidos());
         outDto.setEspecialidad(medico.getEspecialidad());
+        outDto.setSexo(medico.getSexo().name());
         return outDto;
     }
 }

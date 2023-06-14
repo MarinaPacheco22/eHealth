@@ -3,6 +3,9 @@ package com.tfg.eHealth.converter;
 import com.tfg.eHealth.dtos.*;
 import com.tfg.eHealth.entities.*;
 
+import com.tfg.eHealth.vo.Archivo;
+import com.tfg.eHealth.vo.EstadoEnum;
+import com.tfg.eHealth.vo.SexoEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ public class DtoToEntityConverter {
         medico.setNombre(medicoDto.getNombre());
         medico.setApellidos(medicoDto.getApellidos());
         medico.setFechaNacimiento(medicoDto.getFechaNacimiento());
+        medico.setSexo(SexoEnum.valueOf(medicoDto.getSexo()));
         medico.setDni(medicoDto.getDni());
         medico.setTelefono(medicoDto.getTelefono());
         medico.setEmail(medicoDto.getEmail());
@@ -51,6 +55,7 @@ public class DtoToEntityConverter {
         paciente.setPassword(pacienteInDto.getPassword());
         paciente.setPeso(pacienteInDto.getPeso());
         paciente.setAltura(pacienteInDto.getAltura());
+        paciente.setSexo(SexoEnum.valueOf(pacienteInDto.getSexo()));
         if (pacienteInDto.getHistorialClinico() != null) {
             paciente.setHistorialClinico(convert(pacienteInDto.getHistorialClinico()));
         }
@@ -95,12 +100,15 @@ public class DtoToEntityConverter {
         SolicitudConsulta solicitudConsulta = new SolicitudConsulta();
         solicitudConsulta.setId(solicitudConsultaInDto.getId());
         solicitudConsulta.setDescripcion(solicitudConsultaInDto.getDescripcion());
+        solicitudConsulta.setEstado(EstadoEnum.valueOf(solicitudConsultaInDto.getEstado()));
         solicitudConsulta.setFecha(solicitudConsultaInDto.getFecha());
         if (solicitudConsultaInDto.getArchivos() != null) {
-            List<byte[]> archivos = solicitudConsultaInDto.getArchivos().stream()
+            List<Archivo> archivos = solicitudConsultaInDto.getArchivos().stream()
                     .map(archivo -> {
                         try {
-                            return archivo.getBytes();
+                            Archivo a = new Archivo();
+                            a.setArchivo(archivo.getBytes());
+                            return a;
                         } catch (IOException e) {
                             logger.error("Error al procesar el archivo." + e.getMessage());
                             return null;
@@ -126,6 +134,7 @@ public class DtoToEntityConverter {
         paciente.setPassword(pacienteOutDto.getPassword());
         paciente.setPeso(pacienteOutDto.getPeso());
         paciente.setAltura(pacienteOutDto.getAltura());
+        paciente.setSexo(SexoEnum.valueOf(pacienteOutDto.getSexo()));
         return paciente;
     }
 

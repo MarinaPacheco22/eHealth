@@ -8,6 +8,7 @@ import com.tfg.eHealth.entities.SolicitudConsulta;
 import com.tfg.eHealth.repositories.MedicoRepository;
 import com.tfg.eHealth.repositories.PacienteRepository;
 import com.tfg.eHealth.repositories.SolicitudConsultaRepository;
+import com.tfg.eHealth.vo.Archivo;
 import com.tfg.eHealth.vo.EstadoEnum;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -74,10 +75,12 @@ public class SolicitudConsultaService {
         toCreate.setFecha(LocalDate.now());
         toCreate.setEstado(EstadoEnum.SOLICITUD_ENVIADA);
         if (files != null) {
-            List<byte[]> archivos = Arrays.stream(files)
+            List<Archivo> archivos = Arrays.stream(files)
                     .map(archivo -> {
                         try {
-                            return archivo.getBytes();
+                            Archivo a = new Archivo();
+                            a.setArchivo(archivo.getBytes());
+                            return a;
                         } catch (IOException e) {
                             logger.error("Error al procesar el archivo." + e.getMessage());
                             return null;

@@ -1,6 +1,7 @@
 package com.tfg.eHealth.entities;
 
 
+import com.tfg.eHealth.vo.Archivo;
 import com.tfg.eHealth.vo.EstadoEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class SolicitudConsulta {
     private EstadoEnum estado;
 
     @ElementCollection
-    private List<byte[]> archivos;
+    private List<Archivo> archivos;
 
     @ManyToOne
     @JoinColumn(name = "medico_id")

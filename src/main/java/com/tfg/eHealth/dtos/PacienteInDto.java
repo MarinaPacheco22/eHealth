@@ -1,10 +1,12 @@
 package com.tfg.eHealth.dtos;
 
+import com.tfg.eHealth.vo.SexoEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import java.time.LocalDate;
 
 @Getter
@@ -22,6 +24,7 @@ public class PacienteInDto {
     private String telefono;
     private String email;
     private String password;
+    private String sexo;
     private Double peso;
     private Double altura;
     private HistorialClinicoInDto historialClinico;

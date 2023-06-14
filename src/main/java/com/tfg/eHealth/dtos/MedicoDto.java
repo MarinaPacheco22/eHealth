@@ -23,6 +23,7 @@ public class MedicoDto {
     private String email;
     private String password;
     private String numeroDeColegiado;
+    private String sexo;
     private String especialidad;
     private boolean activo;
     private List<PacienteInDto> pacientesAsignados;

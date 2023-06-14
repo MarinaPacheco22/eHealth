@@ -21,6 +21,7 @@ public class PacienteOutDto {
     private String dni;
     private String numSegSocial;
     private String telefono;
+    private String sexo;
     private String email;
     private String password;
     private Double peso;

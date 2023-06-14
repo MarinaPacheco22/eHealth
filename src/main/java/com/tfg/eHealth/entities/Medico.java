@@ -1,6 +1,7 @@
 package com.tfg.eHealth.entities;
 
 
+import com.tfg.eHealth.vo.SexoEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +28,9 @@ public class Medico {
 
     @Column
     private LocalDate fechaNacimiento;
+
+    @Column
+    private SexoEnum sexo;
 
     @Column
     private String dni;
