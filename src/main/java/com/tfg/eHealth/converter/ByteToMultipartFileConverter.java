@@ -3,6 +3,7 @@ package com.tfg.eHealth.converter;
 import com.tfg.eHealth.vo.Archivo;
 import org.apache.tika.Tika;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+@Component
 public class ByteToMultipartFileConverter {
 
     private final Tika TIKA = new Tika();

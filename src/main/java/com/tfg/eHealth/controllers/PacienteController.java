@@ -2,8 +2,10 @@ package com.tfg.eHealth.controllers;
 
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
+import com.tfg.eHealth.dtos.MedicoDto;
 import com.tfg.eHealth.dtos.PacienteInDto;
 import com.tfg.eHealth.dtos.PacienteOutDto;
+import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.Paciente;
 import com.tfg.eHealth.services.PacienteService;
 import javassist.NotFoundException;
@@ -38,6 +40,21 @@ public class PacienteController {
     public ResponseEntity<?> getPacienteList() {
         ResponseEntity<?> toReturn;
         List<Paciente> pacientes = pacienteService.getAllPacientes();
+        if (pacientes.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<PacienteInDto> appRes = pacientes.stream()
+                    .map(entityToDtoConverter::convertIn)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> getPacientesFilteredList(@RequestParam(required = false, value = "filter") String search) {
+        ResponseEntity<?> toReturn;
+        List<Paciente> pacientes = pacienteService.getPacientesFiltrados(search);
         if (pacientes.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

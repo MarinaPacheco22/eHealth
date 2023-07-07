@@ -21,4 +21,5 @@ public class SolicitudConsultaOutDto {
     private String estado;
     private Long pacienteId;
     private MedicoOutDto medicoOutDto;
+    private int numArchivos;
 }

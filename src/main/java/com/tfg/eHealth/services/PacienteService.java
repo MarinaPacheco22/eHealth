@@ -9,16 +9,21 @@ import com.tfg.eHealth.entities.Paciente;
 import com.tfg.eHealth.repositories.HistorialClinicoRepository;
 import com.tfg.eHealth.repositories.MedicoRepository;
 import com.tfg.eHealth.repositories.PacienteRepository;
+import com.tfg.eHealth.utils.EntitySpecificationsBuilder;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PacienteService {
@@ -131,5 +136,26 @@ public class PacienteService {
         entityManager.merge(paciente.get());
 
         return entityToDtoConverter.convertOut(paciente.get());
+    }
+
+
+    public List<Paciente> getPacientesFiltrados(String search) {
+        Specification<Paciente> spec = getMedicoSpecification(search);
+        return pacienteRepository.findAll(spec);
+    }
+
+    private Specification<Paciente> getMedicoSpecification(String search) {
+        search = Normalizer
+                .normalize(search, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
+        EntitySpecificationsBuilder<Paciente> builder = new EntitySpecificationsBuilder<>();
+        Pattern pattern = Pattern.compile("(\\w+(?:\\.\\w+)*)(/|:|<|>)((?>\\w|-| |:|/)+?),");
+        Matcher matcher = pattern.matcher(search + ",");
+
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        return builder.build();
     }
 }

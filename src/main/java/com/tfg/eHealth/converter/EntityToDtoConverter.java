@@ -2,12 +2,15 @@ package com.tfg.eHealth.converter;
 
 import com.tfg.eHealth.dtos.*;
 import com.tfg.eHealth.entities.*;
+import com.tfg.eHealth.vo.Archivo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,7 @@ public class EntityToDtoConverter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private ByteToMultipartFileConverter byteToMultipartFileConverter;
 
     public PacienteInDto convertIn(Paciente paciente) {
@@ -68,7 +72,7 @@ public class EntityToDtoConverter {
         medicoDTO.setPassword(medico.getPassword());
         medicoDTO.setNumeroDeColegiado(medico.getNumeroDeColegiado());
         medicoDTO.setEspecialidad(medico.getEspecialidad());
-        medicoDTO.setActivo(medico.isActivo());
+        medicoDTO.setActivo(medico.getActivo());
         if (medico.getPacientesAsignados() != null) {
             List<PacienteInDto> pacientesDto = medico.getPacientesAsignados().stream()
                     .map(this::convertIn)
@@ -136,6 +140,8 @@ public class EntityToDtoConverter {
         solicitudConsultaOutDto.setFecha(solicitudConsulta.getFecha());
         solicitudConsultaOutDto.setEstado(solicitudConsulta.getEstado().name());
         solicitudConsultaOutDto.setMedicoOutDto(convertOut(solicitudConsulta.getMedico()));
+        solicitudConsultaOutDto.setPacienteId(solicitudConsulta.getPaciente().getId());
+        solicitudConsultaOutDto.setNumArchivos(solicitudConsulta.getArchivos().size());
         return solicitudConsultaOutDto;
     }
 
@@ -147,5 +153,23 @@ public class EntityToDtoConverter {
         outDto.setEspecialidad(medico.getEspecialidad());
         outDto.setSexo(medico.getSexo().name());
         return outDto;
+    }
+
+    public List<ArchivoOutDto> convert(List<Archivo> files) {
+        return files.stream()
+                .map(archivo -> {
+                    try {
+                        int numeroArchivo = files.indexOf(archivo) + 1;
+                        String nombreArchivo = "archivo" + numeroArchivo;
+                        MultipartFile multipartFile = byteToMultipartFileConverter.convert(archivo, nombreArchivo);
+                        ArchivoOutDto outDto = new ArchivoOutDto();
+                        outDto.setArchivo(multipartFile);
+                        return outDto;
+                    } catch (IOException e) {
+                        logger.error("Error al procesar el archivo: " + e.getMessage());
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -8,20 +8,25 @@ import com.tfg.eHealth.entities.SolicitudConsulta;
 import com.tfg.eHealth.repositories.MedicoRepository;
 import com.tfg.eHealth.repositories.PacienteRepository;
 import com.tfg.eHealth.repositories.SolicitudConsultaRepository;
+import com.tfg.eHealth.utils.EntitySpecificationsBuilder;
 import com.tfg.eHealth.vo.Archivo;
 import com.tfg.eHealth.vo.EstadoEnum;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,5 +120,30 @@ public class SolicitudConsultaService {
 
     public List<SolicitudConsulta> getSolicitudesConsultaByPacienteId(Long id) {
         return solicitudConsultaRepository.findAllByPaciente_Id(id);
+    }
+
+    public List<Archivo> getArchivosBySolicitudesConsultaId(Long id) throws NotFoundException {
+        SolicitudConsulta solicitudConsulta = getSolicitudConsultaById(id);
+        return solicitudConsulta.getArchivos();
+    }
+
+    public List<SolicitudConsulta> getSolicitudesConsultaFiltradas(String search) {
+        Specification<SolicitudConsulta> spec = getSolicitudConsultaSpecification(search);
+        return solicitudConsultaRepository.findAll(spec);
+    }
+
+    private Specification<SolicitudConsulta> getSolicitudConsultaSpecification(String search) {
+        search = Normalizer
+                .normalize(search, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
+        EntitySpecificationsBuilder<SolicitudConsulta> builder = new EntitySpecificationsBuilder<>();
+        Pattern pattern = Pattern.compile("(\\w+(?:\\.\\w+)*)(/|:|<|>)((?>\\w|-| |:|/)+?),");
+        Matcher matcher = pattern.matcher(search + ",");
+
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        return builder.build();
     }
 }

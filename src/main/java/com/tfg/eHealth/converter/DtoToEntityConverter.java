@@ -32,7 +32,7 @@ public class DtoToEntityConverter {
         medico.setPassword(medicoDto.getPassword());
         medico.setNumeroDeColegiado(medicoDto.getNumeroDeColegiado());
         medico.setEspecialidad(medicoDto.getEspecialidad());
-        medico.setActivo(medicoDto.isActivo());
+        medico.setActivo(medicoDto.getActivo());
         if (medicoDto.getPacientesAsignados() != null) {
             List<Paciente> pacientes = medicoDto.getPacientesAsignados().stream()
                     .map(this::convert)

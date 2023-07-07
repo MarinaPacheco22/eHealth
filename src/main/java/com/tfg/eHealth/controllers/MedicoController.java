@@ -5,7 +5,9 @@ import com.tfg.eHealth.converter.EntityToDtoConverter;
 import com.tfg.eHealth.dtos.MedicoDto;
 import com.tfg.eHealth.dtos.MedicoOutDto;
 import com.tfg.eHealth.dtos.PacienteOutDto;
+import com.tfg.eHealth.dtos.SolicitudConsultaOutDto;
 import com.tfg.eHealth.entities.Medico;
+import com.tfg.eHealth.entities.SolicitudConsulta;
 import com.tfg.eHealth.services.MedicoService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -39,6 +41,21 @@ public class MedicoController {
     public ResponseEntity<?> getMedicosList() {
         ResponseEntity<?> toReturn;
         List<Medico> medicos = medicoService.getAllMedicos();
+        if (medicos.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<MedicoDto> appRes = medicos.stream()
+                    .map(entityToDtoConverter::convertIn)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> getMedicosFilteredList(@RequestParam(required = false, value = "filter") String search) {
+        ResponseEntity<?> toReturn;
+        List<Medico> medicos = medicoService.getMedicosFiltrados(search);
         if (medicos.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

@@ -51,7 +51,7 @@ public class Medico {
     private String especialidad;
 
     @Column
-    private boolean activo;
+    private Boolean activo;
 
     @OneToMany(mappedBy = "medicoAsignado")
     private List<Paciente> pacientesAsignados;
