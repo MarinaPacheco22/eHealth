@@ -122,6 +122,10 @@ public class SolicitudConsultaService {
         return solicitudConsultaRepository.findAllByPaciente_Id(id);
     }
 
+    public List<SolicitudConsulta> getSolicitudesConsultaByMedicoId(Long id) {
+        return solicitudConsultaRepository.findAllByMedico_Id(id);
+    }
+
     public List<Archivo> getArchivosBySolicitudesConsultaId(Long id) throws NotFoundException {
         SolicitudConsulta solicitudConsulta = getSolicitudConsultaById(id);
         return solicitudConsulta.getArchivos();

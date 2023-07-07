@@ -53,6 +53,10 @@ public class EntityToDtoConverter {
         pacienteOutDTO.setAltura(paciente.getAltura());
         pacienteOutDTO.setSexo(paciente.getSexo().name());
         pacienteOutDTO.setPassword(paciente.getPassword());
+        pacienteOutDTO.setAlergias(paciente.getHistorialClinico().getAlergias());
+        pacienteOutDTO.setEnfermedadesDiagnosticadas(paciente.getHistorialClinico().getEnfermedadesDiagnosticadas());
+        pacienteOutDTO.setIntervenciones(paciente.getHistorialClinico().getIntervenciones());
+        pacienteOutDTO.setMedicacionActual(paciente.getHistorialClinico().getMedicacionActual());
         if (paciente.getMedicoAsignado() != null) {
             pacienteOutDTO.setMedicoAsignado(paciente.getMedicoAsignado().getId());
         }
@@ -140,7 +144,7 @@ public class EntityToDtoConverter {
         solicitudConsultaOutDto.setFecha(solicitudConsulta.getFecha());
         solicitudConsultaOutDto.setEstado(solicitudConsulta.getEstado().name());
         solicitudConsultaOutDto.setMedicoOutDto(convertOut(solicitudConsulta.getMedico()));
-        solicitudConsultaOutDto.setPacienteId(solicitudConsulta.getPaciente().getId());
+        solicitudConsultaOutDto.setPacienteOutDto(convertOut(solicitudConsulta.getPaciente()));
         solicitudConsultaOutDto.setNumArchivos(solicitudConsulta.getArchivos().size());
         return solicitudConsultaOutDto;
     }

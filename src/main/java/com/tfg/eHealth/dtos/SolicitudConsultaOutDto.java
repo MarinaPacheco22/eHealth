@@ -19,7 +19,7 @@ public class SolicitudConsultaOutDto {
     private String descripcion;
     private LocalDate fecha;
     private String estado;
-    private Long pacienteId;
+    private PacienteOutDto pacienteOutDto;
     private MedicoOutDto medicoOutDto;
     private int numArchivos;
 }

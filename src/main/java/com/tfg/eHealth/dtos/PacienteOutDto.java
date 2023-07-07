@@ -29,5 +29,6 @@ public class PacienteOutDto {
     private List<String> enfermedadesDiagnosticadas;
     private List<String> intervenciones;
     private List<String> alergias;
+    private List<String> medicacionActual;
     private Long medicoAsignado;
 }

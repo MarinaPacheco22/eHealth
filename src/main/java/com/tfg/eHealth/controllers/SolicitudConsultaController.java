@@ -100,6 +100,21 @@ public class SolicitudConsultaController {
         return toReturn;
     }
 
+    @GetMapping("/by-medico/{id}")
+    public ResponseEntity<?> getSolicitudesConsultaByMedicoId(@PathVariable Long id) {
+        ResponseEntity<?> toReturn;
+        List<SolicitudConsulta> solicitudesConsulta = solicitudConsultaService.getSolicitudesConsultaByMedicoId(id);
+        if (solicitudesConsulta.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<SolicitudConsultaOutDto> appRes = solicitudesConsulta.stream()
+                    .map(entityToDtoConverter::convertOut)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
 
 
     @GetMapping("/archivos/{solicitudId}")
