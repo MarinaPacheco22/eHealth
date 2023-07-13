@@ -35,6 +35,7 @@ public class EntityToDtoConverter {
         pacienteInDTO.setPeso(paciente.getPeso());
         pacienteInDTO.setAltura(paciente.getAltura());
         pacienteInDTO.setSexo(paciente.getSexo().name());
+        pacienteInDTO.setFumador(paciente.getFumador());
         pacienteInDTO.setPassword(paciente.getPassword());
         return pacienteInDTO;
     }
@@ -44,13 +45,14 @@ public class EntityToDtoConverter {
         pacienteOutDTO.setId(paciente.getId());
         pacienteOutDTO.setNombre(paciente.getNombre());
         pacienteOutDTO.setApellidos(paciente.getApellidos());
-        pacienteOutDTO.setFechaNacimiento(paciente.getFechaNacimiento());
+        pacienteOutDTO.setFechaNacimiento(paciente.getFechaNacimiento().getDayOfMonth() + "-" + paciente.getFechaNacimiento().getMonthValue() + "-" + paciente.getFechaNacimiento().getYear());
         pacienteOutDTO.setDni(paciente.getDni());
         pacienteOutDTO.setNumSegSocial(paciente.getNumSegSocial());
         pacienteOutDTO.setTelefono(paciente.getTelefono());
         pacienteOutDTO.setEmail(paciente.getEmail());
         pacienteOutDTO.setPeso(paciente.getPeso());
         pacienteOutDTO.setAltura(paciente.getAltura());
+        pacienteOutDTO.setFumador(paciente.getFumador());
         pacienteOutDTO.setSexo(paciente.getSexo().name());
         pacienteOutDTO.setPassword(paciente.getPassword());
         pacienteOutDTO.setAlergias(paciente.getHistorialClinico().getAlergias());

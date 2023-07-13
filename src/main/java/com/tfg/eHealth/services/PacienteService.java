@@ -101,6 +101,7 @@ public class PacienteService {
         byId.setAltura(toUpdate.getAltura());
         byId.setPeso(toUpdate.getPeso());
         byId.setFechaNacimiento(toUpdate.getFechaNacimiento());
+        byId.setFumador(toUpdate.getFumador());
         entityManager.merge(byId);
     }
 

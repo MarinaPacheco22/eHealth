@@ -25,6 +25,7 @@ public class PacienteInDto {
     private String email;
     private String password;
     private String sexo;
+    private Boolean fumador;
     private Double peso;
     private Double altura;
     private HistorialClinicoInDto historialClinico;

@@ -6,11 +6,15 @@ import com.tfg.eHealth.entities.*;
 import com.tfg.eHealth.vo.Archivo;
 import com.tfg.eHealth.vo.EstadoEnum;
 import com.tfg.eHealth.vo.SexoEnum;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +59,7 @@ public class DtoToEntityConverter {
         paciente.setPassword(pacienteInDto.getPassword());
         paciente.setPeso(pacienteInDto.getPeso());
         paciente.setAltura(pacienteInDto.getAltura());
+        paciente.setFumador(pacienteInDto.getFumador());
         paciente.setSexo(SexoEnum.valueOf(pacienteInDto.getSexo()));
         if (pacienteInDto.getHistorialClinico() != null) {
             paciente.setHistorialClinico(convert(pacienteInDto.getHistorialClinico()));
@@ -126,7 +131,9 @@ public class DtoToEntityConverter {
         paciente.setId(pacienteOutDto.getId());
         paciente.setNombre(pacienteOutDto.getNombre());
         paciente.setApellidos(pacienteOutDto.getApellidos());
-        paciente.setFechaNacimiento(pacienteOutDto.getFechaNacimiento());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate fechaNaciemiento = LocalDate.parse(pacienteOutDto.getFechaNacimiento(), formatter);
+        paciente.setFechaNacimiento(fechaNaciemiento);
         paciente.setDni(pacienteOutDto.getDni());
         paciente.setNumSegSocial(pacienteOutDto.getNumSegSocial());
         paciente.setTelefono(pacienteOutDto.getTelefono());
@@ -134,6 +141,7 @@ public class DtoToEntityConverter {
         paciente.setPassword(pacienteOutDto.getPassword());
         paciente.setPeso(pacienteOutDto.getPeso());
         paciente.setAltura(pacienteOutDto.getAltura());
+        paciente.setFumador(pacienteOutDto.getFumador());
         paciente.setSexo(SexoEnum.valueOf(pacienteOutDto.getSexo()));
         return paciente;
     }

@@ -1,5 +1,7 @@
 package com.tfg.eHealth.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +19,7 @@ public class PacienteOutDto {
     private Long id;
     private String nombre;
     private String apellidos;
-    private LocalDate fechaNacimiento;
+    private String fechaNacimiento;
     private String dni;
     private String numSegSocial;
     private String telefono;
@@ -26,6 +28,7 @@ public class PacienteOutDto {
     private String password;
     private Double peso;
     private Double altura;
+    private Boolean fumador;
     private List<String> enfermedadesDiagnosticadas;
     private List<String> intervenciones;
     private List<String> alergias;

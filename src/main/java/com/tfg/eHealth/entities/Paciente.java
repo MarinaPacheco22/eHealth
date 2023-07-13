@@ -54,6 +54,9 @@ public class Paciente {
     @Column
     private SexoEnum sexo;
 
+    @Column
+    private Boolean fumador;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "historial_clinico_id", referencedColumnName = "id")
     private HistorialClinico historialClinico;
