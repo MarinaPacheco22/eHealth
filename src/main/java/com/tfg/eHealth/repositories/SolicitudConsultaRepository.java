@@ -15,4 +15,5 @@ import java.util.Optional;
 public interface SolicitudConsultaRepository extends JpaRepository<SolicitudConsulta, Long>, JpaSpecificationExecutor<SolicitudConsulta> {
     List<SolicitudConsulta> findAllByPaciente_Id(long id);
     List<SolicitudConsulta> findAllByMedico_Id(long id);
+    List<SolicitudConsulta> findAllByMedico_IdAndEstado(long id, EstadoEnum estado);
 }

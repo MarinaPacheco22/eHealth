@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
@@ -12,5 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class ArchivoOutDto {
 
-    private MultipartFile archivo;
+    private String nombreArchivo;
+    private String tipoContenido;
+    private byte[] bytes;
 }

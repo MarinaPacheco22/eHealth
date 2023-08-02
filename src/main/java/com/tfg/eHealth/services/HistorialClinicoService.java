@@ -10,6 +10,7 @@ import com.tfg.eHealth.entities.Paciente;
 import com.tfg.eHealth.repositories.HistorialClinicoRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -97,5 +98,31 @@ public class HistorialClinicoService {
         }
 
         return byId.get();
+    }
+
+    @Transactional
+    public void updateHistorialCLinico(String medicacion, String enfermedades, String alergias, long pacienteId) throws NotFoundException {
+        HistorialClinico historialClinicoByPaciente = getHistorialClinicoByPacienteId(pacienteId);
+        if (medicacion != null && !medicacion.equals("")) {
+            List<String> medicacionesToAdd = List.of(medicacion.split(", "));
+            List<String> medicacionActual = historialClinicoByPaciente.getMedicacionActual();
+            medicacionActual.addAll(medicacionesToAdd);
+            historialClinicoByPaciente.setMedicacionActual(medicacionActual);
+        }
+
+        if (enfermedades != null && !enfermedades.equals("")) {
+            List<String> enfermedadesToAdd = List.of(enfermedades.split(", "));
+            List<String> enfermedadesActuales = historialClinicoByPaciente.getEnfermedadesDiagnosticadas();
+            enfermedadesActuales.addAll(enfermedadesToAdd);
+            historialClinicoByPaciente.setEnfermedadesDiagnosticadas(enfermedadesActuales);
+        }
+
+        if (alergias != null && !alergias.equals("")) {
+            List<String> alergiasToAdd = List.of(alergias.split(", "));
+            List<String> alergiasActuales = historialClinicoByPaciente.getAlergias();
+            alergiasActuales.addAll(alergiasToAdd);
+            historialClinicoByPaciente.setAlergias(alergiasActuales);
+        }
+        entityManager.merge(historialClinicoByPaciente);
     }
 }

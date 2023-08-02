@@ -6,7 +6,6 @@ import com.tfg.eHealth.entities.*;
 import com.tfg.eHealth.vo.Archivo;
 import com.tfg.eHealth.vo.EstadoEnum;
 import com.tfg.eHealth.vo.SexoEnum;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,6 +77,15 @@ public class DtoToEntityConverter {
         pruebaMedica.setTratamiento(pruebaMedicaDto.getTratamiento());
         pruebaMedica.setHistorialClinico(convert(pruebaMedicaDto.getHistorialClinico()));
         return pruebaMedica;
+    }
+
+    public ResolucionConsulta convert(ResolucionConsultaInDto resolucionConsultaInDto) {
+        ResolucionConsulta resolucionConsulta = new ResolucionConsulta();
+        resolucionConsulta.setId(resolucionConsultaInDto.getId());
+        resolucionConsulta.setFecha(LocalDate.now());
+        resolucionConsulta.setDiagnostico(resolucionConsultaInDto.getDiagnostico());
+        resolucionConsulta.setTratamiento(resolucionConsultaInDto.getTratamiento());
+        return resolucionConsulta;
     }
 
     public HistorialClinico convert(HistorialClinicoInDto historialClinicoInDto) {

@@ -123,7 +123,7 @@ public class SolicitudConsultaService {
     }
 
     public List<SolicitudConsulta> getSolicitudesConsultaByMedicoId(Long id) {
-        return solicitudConsultaRepository.findAllByMedico_Id(id);
+        return solicitudConsultaRepository.findAllByMedico_IdAndEstado(id, EstadoEnum.SOLICITUD_ENVIADA);
     }
 
     public List<Archivo> getArchivosBySolicitudesConsultaId(Long id) throws NotFoundException {
@@ -149,5 +149,11 @@ public class SolicitudConsultaService {
         }
 
         return builder.build();
+    }
+
+    public void updateState(Long id, Long state) throws NotFoundException {
+        SolicitudConsulta solicitudConsultaById = getSolicitudConsultaById(id);
+        solicitudConsultaById.setEstado(EstadoEnum.values()[Math.toIntExact(state)]);
+        solicitudConsultaRepository.save(solicitudConsultaById);
     }
 }

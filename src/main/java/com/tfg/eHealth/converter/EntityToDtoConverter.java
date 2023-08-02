@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,6 +113,14 @@ public class EntityToDtoConverter {
         return dto;
     }
 
+    public ResolucionConsultaInDto convert(ResolucionConsulta resolucionConsulta) {
+        ResolucionConsultaInDto dto = new ResolucionConsultaInDto();
+        dto.setId(resolucionConsulta.getId());
+        dto.setDiagnostico(resolucionConsulta.getDiagnostico());
+        dto.setTratamiento(resolucionConsulta.getTratamiento());
+        return dto;
+    }
+
     public SolicitudConsultaInDto convertIn(SolicitudConsulta solicitudConsulta) {
         SolicitudConsultaInDto solicitudConsultaInDto = new SolicitudConsultaInDto();
         solicitudConsultaInDto.setId(solicitudConsulta.getId());
@@ -169,7 +176,9 @@ public class EntityToDtoConverter {
                         String nombreArchivo = "archivo" + numeroArchivo;
                         MultipartFile multipartFile = byteToMultipartFileConverter.convert(archivo, nombreArchivo);
                         ArchivoOutDto outDto = new ArchivoOutDto();
-                        outDto.setArchivo(multipartFile);
+                        outDto.setNombreArchivo(multipartFile.getName());
+                        outDto.setTipoContenido(multipartFile.getContentType());
+                        outDto.setBytes(multipartFile.getBytes());
                         return outDto;
                     } catch (IOException e) {
                         logger.error("Error al procesar el archivo: " + e.getMessage());
