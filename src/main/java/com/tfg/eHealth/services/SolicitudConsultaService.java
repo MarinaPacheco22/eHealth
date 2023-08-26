@@ -156,4 +156,21 @@ public class SolicitudConsultaService {
         solicitudConsultaById.setEstado(EstadoEnum.values()[Math.toIntExact(state)]);
         solicitudConsultaRepository.save(solicitudConsultaById);
     }
+
+    public void refer(Long id, String especialidad) throws NotFoundException {
+        List<Medico> medicosList = medicoRepository.getMedicoByEspecialidadWithLessAsignations(especialidad);
+
+        if (medicosList.isEmpty()) {
+            throw new NotFoundException("No se han encontrado médicos para esa especialidad.");
+        }
+
+        Optional<SolicitudConsulta> byId = solicitudConsultaRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            throw new NotFoundException("No se ha encontrado ninguna solicitud con id <" + id + ">.");
+        }
+
+        byId.get().setMedico(medicosList.get(0));
+        solicitudConsultaRepository.save(byId.get());
+    }
 }

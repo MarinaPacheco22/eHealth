@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,34 @@ public class DtoToEntityConverter {
         return medico;
     }
 
+    public Medico convertIn(MedicoInDto medicoDto) {
+        Medico medico = new Medico();
+        medico.setId(medicoDto.getId());
+        medico.setNombre(medicoDto.getNombre());
+        medico.setApellidos(medicoDto.getApellidos());
+        medico.setFechaNacimiento(formatDate(medicoDto.getFechaNacimiento()));
+        medico.setSexo(SexoEnum.valueOf(medicoDto.getSexo()));
+        medico.setDni(medicoDto.getDni());
+        medico.setTelefono(medicoDto.getTelefono());
+        medico.setEmail(medicoDto.getEmail());
+        medico.setPassword(medicoDto.getPassword());
+        medico.setNumeroDeColegiado(medicoDto.getNumeroDeColegiado());
+        medico.setEspecialidad(medicoDto.getEspecialidad());
+        medico.setActivo(medicoDto.getActivo());
+        if (medicoDto.getPacientesAsignados() != null) {
+            List<Paciente> pacientes = medicoDto.getPacientesAsignados().stream()
+                    .map(this::convert)
+                    .collect(Collectors.toList());
+            medico.setPacientesAsignados(pacientes);
+        }
+        return medico;
+    }
+
+    private LocalDate formatDate(String fechaStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(fechaStr, formatter);
+    }
+
     public Paciente convert(PacienteInDto pacienteInDto) {
         Paciente paciente = new Paciente();
         paciente.setId(pacienteInDto.getId());
@@ -68,15 +97,18 @@ public class DtoToEntityConverter {
         return paciente;
     }
 
-    public PruebaMedica convert(PruebaMedicaDto pruebaMedicaDto) {
+    public PruebaMedica convert(PruebaMedicaInDto pruebaMedicaDto) {
         PruebaMedica pruebaMedica = new PruebaMedica();
-        pruebaMedica.setId(pruebaMedicaDto.getId());
-        pruebaMedica.setFecha(pruebaMedicaDto.getFecha());
-        pruebaMedica.setNombre(pruebaMedicaDto.getNombre());
-        pruebaMedica.setDiagnostico(pruebaMedicaDto.getDiagnostico());
-        pruebaMedica.setTratamiento(pruebaMedicaDto.getTratamiento());
-        pruebaMedica.setHistorialClinico(convert(pruebaMedicaDto.getHistorialClinico()));
+        pruebaMedica.setFechaHoraCita(formatDatetime(pruebaMedicaDto.getFechaHoraCita()));
+        pruebaMedica.setPrueba(pruebaMedicaDto.getPrueba());
+        pruebaMedica.setConsulta(pruebaMedicaDto.getConsulta());
+        pruebaMedica.setResultadosUrl(pruebaMedicaDto.getResultadosUrl());
         return pruebaMedica;
+    }
+
+    private LocalDateTime formatDatetime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        return LocalDateTime.parse(inputDateTime, formatter);
     }
 
     public ResolucionConsulta convert(ResolucionConsultaInDto resolucionConsultaInDto) {
@@ -85,6 +117,7 @@ public class DtoToEntityConverter {
         resolucionConsulta.setFecha(LocalDate.now());
         resolucionConsulta.setDiagnostico(resolucionConsultaInDto.getDiagnostico());
         resolucionConsulta.setTratamiento(resolucionConsultaInDto.getTratamiento());
+        resolucionConsulta.setObservacion(resolucionConsultaInDto.getObservacion());
         return resolucionConsulta;
     }
 

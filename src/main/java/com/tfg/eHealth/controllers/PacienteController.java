@@ -43,8 +43,8 @@ public class PacienteController {
         if (pacientes.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            List<PacienteInDto> appRes = pacientes.stream()
-                    .map(entityToDtoConverter::convertIn)
+            List<PacienteOutDto> appRes = pacientes.stream()
+                    .map(entityToDtoConverter::convertOut)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }
@@ -58,8 +58,8 @@ public class PacienteController {
         if (pacientes.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            List<PacienteInDto> appRes = pacientes.stream()
-                    .map(entityToDtoConverter::convertIn)
+            List<PacienteOutDto> appRes = pacientes.stream()
+                    .map(entityToDtoConverter::convertOut)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }

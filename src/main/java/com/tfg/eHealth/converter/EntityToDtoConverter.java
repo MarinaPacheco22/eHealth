@@ -94,22 +94,19 @@ public class EntityToDtoConverter {
         dto.setIntervenciones(historialClinico.getIntervenciones());
         dto.setAlergias(historialClinico.getAlergias());
         dto.setMedicacionActual(historialClinico.getMedicacionActual());
-        if (historialClinico.getPruebasMedicas() != null) {
-            List<PruebaMedicaDto> pruebasDto = historialClinico.getPruebasMedicas().stream()
-                    .map(this::convertIn)
-                    .collect(Collectors.toList());
-            dto.setPruebasMedicas(pruebasDto);
-        }
         return dto;
     }
 
-    public PruebaMedicaDto convertIn(PruebaMedica pruebaMedica) {
-        PruebaMedicaDto dto = new PruebaMedicaDto();
+    public PruebaMedicaOutDto convert(PruebaMedica pruebaMedica) {
+        PruebaMedicaOutDto dto = new PruebaMedicaOutDto();
         dto.setId(pruebaMedica.getId());
-        dto.setFecha(pruebaMedica.getFecha());
-        dto.setNombre(pruebaMedica.getNombre());
-        dto.setDiagnostico(pruebaMedica.getDiagnostico());
-        dto.setTratamiento(pruebaMedica.getTratamiento());
+        dto.setPrueba(pruebaMedica.getPrueba());
+        dto.setFechaHoraCita(pruebaMedica.getFechaHoraCita());
+        dto.setConsulta(pruebaMedica.getConsulta());
+        dto.setResultadosUrl(pruebaMedica.getResultadosUrl());
+        dto.setPacienteOutDto(convertOut(pruebaMedica.getSolicitudConsulta().getPaciente()));
+        dto.setMedicoOutDto(convertOut(pruebaMedica.getSolicitudConsulta().getMedico()));
+        dto.setSolicitudConsultaOutDto(convertOut(pruebaMedica.getSolicitudConsulta()));
         return dto;
     }
 
@@ -118,6 +115,7 @@ public class EntityToDtoConverter {
         dto.setId(resolucionConsulta.getId());
         dto.setDiagnostico(resolucionConsulta.getDiagnostico());
         dto.setTratamiento(resolucionConsulta.getTratamiento());
+        dto.setObservacion(resolucionConsulta.getObservacion());
         return dto;
     }
 
@@ -155,6 +153,7 @@ public class EntityToDtoConverter {
         solicitudConsultaOutDto.setMedicoOutDto(convertOut(solicitudConsulta.getMedico()));
         solicitudConsultaOutDto.setPacienteOutDto(convertOut(solicitudConsulta.getPaciente()));
         solicitudConsultaOutDto.setNumArchivos(solicitudConsulta.getArchivos().size());
+        solicitudConsultaOutDto.setPruebasBoolean(solicitudConsulta.getPruebasMedicas().size() != 0);
         return solicitudConsultaOutDto;
     }
 

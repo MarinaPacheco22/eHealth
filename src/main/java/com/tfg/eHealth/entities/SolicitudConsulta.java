@@ -44,5 +44,8 @@ public class SolicitudConsulta {
     @OneToMany(mappedBy = "solicitudConsulta", cascade = CascadeType.ALL)
     private List<ResolucionConsulta> resolucionConsulta;
 
+    @OneToMany(mappedBy = "solicitudConsulta", cascade = CascadeType.ALL)
+    private List<PruebaMedica> pruebasMedicas;
+
 }
 

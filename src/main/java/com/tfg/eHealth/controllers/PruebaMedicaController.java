@@ -2,7 +2,8 @@ package com.tfg.eHealth.controllers;
 
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
-import com.tfg.eHealth.dtos.PruebaMedicaDto;
+import com.tfg.eHealth.dtos.PruebaMedicaInDto;
+import com.tfg.eHealth.dtos.PruebaMedicaOutDto;
 import com.tfg.eHealth.entities.PruebaMedica;
 import com.tfg.eHealth.services.PruebaMedicaService;
 import javassist.NotFoundException;
@@ -32,15 +33,45 @@ public class PruebaMedicaController {
     @Autowired
     private DtoToEntityConverter dtoToEntityConverter;
 
-    @GetMapping
-    public ResponseEntity<?> getPruebaMedicaList() {
+    @GetMapping("/by-medico/{id}")
+    public ResponseEntity<?> getPruebasMedicasListByMedicoWithoutResults(@PathVariable Long id) {
         ResponseEntity<?> toReturn;
-        List<PruebaMedica> pruebasMedicas = pruebaMedicaService.getAllPruebasMedicas();
+        List<PruebaMedica> pruebasMedicas = pruebaMedicaService.getWithoutResultPruebasMedicasByMedico(id);
         if (pruebasMedicas.isEmpty()) {
             toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            List<PruebaMedicaDto> appRes = pruebasMedicas.stream()
-                    .map(entityToDtoConverter::convertIn)
+            List<PruebaMedicaOutDto> appRes = pruebasMedicas.stream()
+                    .map(entityToDtoConverter::convert)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/by-paciente/{id}")
+    public ResponseEntity<?> getPruebasMedicasListByPaciente(@PathVariable Long id) {
+        ResponseEntity<?> toReturn;
+        List<PruebaMedica> pruebasMedicas = pruebaMedicaService.getPruebasMedicasByPaciente(id);
+        if (pruebasMedicas.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<PruebaMedicaOutDto> appRes = pruebasMedicas.stream()
+                    .map(entityToDtoConverter::convert)
+                    .collect(Collectors.toList());
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        }
+        return toReturn;
+    }
+
+    @GetMapping("/by-solicitud/{id}")
+    public ResponseEntity<?> getPruebasMedicasListBySolicitud(@PathVariable Long id) {
+        ResponseEntity<?> toReturn;
+        List<PruebaMedica> pruebasMedicas = pruebaMedicaService.getPruebasMedicasBySolicitud(id);
+        if (pruebasMedicas.isEmpty()) {
+            toReturn = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<PruebaMedicaOutDto> appRes = pruebasMedicas.stream()
+                    .map(entityToDtoConverter::convert)
                     .collect(Collectors.toList());
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         }
@@ -52,7 +83,7 @@ public class PruebaMedicaController {
         ResponseEntity<?> toReturn;
         try {
             PruebaMedica pruebaMedica = pruebaMedicaService.getPruebaMedicaById(id);
-            PruebaMedicaDto appRes = entityToDtoConverter.convertIn(pruebaMedica);
+            PruebaMedicaOutDto appRes = entityToDtoConverter.convert(pruebaMedica);
             toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);
@@ -64,12 +95,28 @@ public class PruebaMedicaController {
         return toReturn;
     }
 
+    @PutMapping("/add-results/{id}")
+    public ResponseEntity<?> addPruebaMedicaResults(@PathVariable Long id, @RequestBody String resultsUrl) {
+        ResponseEntity<?> toReturn;
+        try {
+            pruebaMedicaService.addResultsUrl(resultsUrl, id);
+            toReturn = new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody PruebaMedicaDto pruebaMedicaDto) {
+    public ResponseEntity<?> create(@RequestBody PruebaMedicaInDto pruebaMedicaDto) {
         ResponseEntity<?> toReturn;
         try {
             PruebaMedica pruebaMedica = dtoToEntityConverter.convert(pruebaMedicaDto);
-            pruebaMedicaService.create(pruebaMedica);
+            pruebaMedicaService.create(pruebaMedica, pruebaMedicaDto.getSolicitudId());
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             logger.warn(e.getMessage(), e);
@@ -82,7 +129,7 @@ public class PruebaMedicaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PruebaMedicaDto pruebaMedicaDto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PruebaMedicaInDto pruebaMedicaDto) {
         ResponseEntity<?> toReturn;
         try {
             PruebaMedica pruebaMedica = dtoToEntityConverter.convert(pruebaMedicaDto);

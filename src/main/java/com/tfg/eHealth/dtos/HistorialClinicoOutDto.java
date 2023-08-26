@@ -18,6 +18,5 @@ public class HistorialClinicoOutDto {
     private List<String> intervenciones;
     private List<String> alergias;
     private List<String> medicacionActual;
-    private List<PruebaMedicaDto> pruebasMedicas;
     private Long pacienteId;
 }

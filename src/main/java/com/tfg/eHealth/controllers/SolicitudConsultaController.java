@@ -186,10 +186,29 @@ public class SolicitudConsultaController {
     }
 
     @PutMapping("/update-state/{id}/{state}")
-    public ResponseEntity<?> update(@PathVariable Long id, @PathVariable Long state) {
+    public ResponseEntity<?> updateState(@PathVariable Long id, @PathVariable Long state) {
         ResponseEntity<?> toReturn;
         try {
             solicitudConsultaService.updateState(id, state);
+            toReturn = new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
+    @PutMapping("/derivar/{id}/{especialidad}")
+    public ResponseEntity<?> updateState(@PathVariable Long id, @PathVariable String especialidad) {
+        ResponseEntity<?> toReturn;
+        try {
+            solicitudConsultaService.refer(id, especialidad);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (NotFoundException e) {
             logger.warn(e.getMessage(), e);

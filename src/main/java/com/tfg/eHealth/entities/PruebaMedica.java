@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -19,20 +20,20 @@ public class PruebaMedica {
     private Long id;
 
     @Column
-    private LocalDate fecha;
+    private LocalDateTime fechaHoraCita;
 
     @Column
-    private String nombre;
+    private String prueba;
 
     @Column
-    private String diagnostico;
+    private String consulta;
 
     @Column
-    private String tratamiento;
+    private String resultadosUrl;
 
     @ManyToOne
-    @JoinColumn(name = "historial_clinico_id")
-    private HistorialClinico historialClinico;
+    @JoinColumn(name = "solicitud_consulta_id")
+    private SolicitudConsulta solicitudConsulta;
 
 }
 

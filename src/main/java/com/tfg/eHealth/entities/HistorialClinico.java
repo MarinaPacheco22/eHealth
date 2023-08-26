@@ -31,9 +31,6 @@ public class HistorialClinico {
     @ElementCollection
     private List<String> medicacionActual;
 
-    @OneToMany(mappedBy = "historialClinico", cascade = CascadeType.ALL)
-    private List<PruebaMedica> pruebasMedicas;
-
     @OneToOne(mappedBy = "historialClinico")
     private Paciente paciente;
 

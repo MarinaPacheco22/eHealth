@@ -22,6 +22,9 @@ public class ResolucionConsulta {
     private LocalDate fecha;
 
     @Column
+    private String observacion;
+
+    @Column
     private String diagnostico;
 
     @Column

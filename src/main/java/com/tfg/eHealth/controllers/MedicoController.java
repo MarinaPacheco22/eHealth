@@ -2,10 +2,7 @@ package com.tfg.eHealth.controllers;
 
 import com.tfg.eHealth.converter.DtoToEntityConverter;
 import com.tfg.eHealth.converter.EntityToDtoConverter;
-import com.tfg.eHealth.dtos.MedicoDto;
-import com.tfg.eHealth.dtos.MedicoOutDto;
-import com.tfg.eHealth.dtos.PacienteOutDto;
-import com.tfg.eHealth.dtos.SolicitudConsultaOutDto;
+import com.tfg.eHealth.dtos.*;
 import com.tfg.eHealth.entities.Medico;
 import com.tfg.eHealth.entities.SolicitudConsulta;
 import com.tfg.eHealth.services.MedicoService;
@@ -134,10 +131,10 @@ public class MedicoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody MedicoDto medicoDto) {
+    public ResponseEntity<?> create(@RequestBody MedicoInDto medicoDto) {
         ResponseEntity<?> toReturn;
         try {
-            Medico medico = dtoToEntityConverter.convert(medicoDto);
+            Medico medico = dtoToEntityConverter.convertIn(medicoDto);
             medicoService.create(medico);
             toReturn = new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

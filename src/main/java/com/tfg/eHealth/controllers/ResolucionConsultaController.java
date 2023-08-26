@@ -69,6 +69,23 @@ public class ResolucionConsultaController {
         return toReturn;
     }
 
+    @GetMapping("/by-consulta/{id}")
+    public ResponseEntity<?> getResolucionConsultaByConsultaId(@PathVariable Long id) {
+        ResponseEntity<?> toReturn;
+        try {
+            ResolucionConsulta resolucionConsulta = resolucionConsultaService.getResolucionByConsultaId(id);
+            ResolucionConsultaInDto appRes = entityToDtoConverter.convert(resolucionConsulta);
+            toReturn = new ResponseEntity<>(appRes, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            toReturn = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return toReturn;
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ResolucionConsultaInDto resolucionConsultaInDto) {
         ResponseEntity<?> toReturn;

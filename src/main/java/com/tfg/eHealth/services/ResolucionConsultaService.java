@@ -27,7 +27,7 @@ public class ResolucionConsultaService {
         Optional<ResolucionConsulta> byId = resolucionConsultaRepository.findById(id);
 
         if (byId.isEmpty()) {
-            throw new NotFoundException("Prueba medica con id <" + id + "> no encontrado.");
+            throw new NotFoundException("Resolución de consulta con id <" + id + "> no encontrado.");
         }
 
         return byId.get();
@@ -43,7 +43,7 @@ public class ResolucionConsultaService {
         Optional<ResolucionConsulta> byId = resolucionConsultaRepository.findById(id);
 
         if (byId.isEmpty()) {
-            throw new NotFoundException("Prueba medica con id <" + id + "> no encontrado.");
+            throw new NotFoundException("Resolución de consulta con id <" + id + "> no encontrado.");
         }
 
         toUpdate.setId(id);
@@ -54,9 +54,19 @@ public class ResolucionConsultaService {
         Optional<ResolucionConsulta> byId = resolucionConsultaRepository.findById(id);
 
         if (byId.isEmpty()) {
-            throw new NotFoundException("Prueba medica con id <" + id + "> no existe.");
+            throw new NotFoundException("Resolución de consulta con id <" + id + "> no existe.");
         }
 
         resolucionConsultaRepository.delete(byId.get());
+    }
+
+    public ResolucionConsulta getResolucionByConsultaId(Long id) throws NotFoundException {
+        List<ResolucionConsulta> byConsultaId = resolucionConsultaRepository.findAllBySolicitudConsulta_Id(id);
+        
+        if (byConsultaId.isEmpty()) {
+            throw new NotFoundException("Resolución de consulta con  id <" + id + "> no existe.");
+        }
+
+        return byConsultaId.get(0);
     }
 }

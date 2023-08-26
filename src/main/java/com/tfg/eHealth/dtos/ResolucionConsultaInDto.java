@@ -12,6 +12,7 @@ import lombok.ToString;
 public class ResolucionConsultaInDto {
 
     private Long id;
+    private String observacion;
     private String diagnostico;
     private String tratamiento;
     private String medicacion;

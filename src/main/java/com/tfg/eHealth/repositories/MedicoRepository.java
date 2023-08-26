@@ -16,6 +16,9 @@ public interface MedicoRepository extends JpaRepository<Medico, Long>, JpaSpecif
     @Query(value = "SELECT m FROM Medico m WHERE m.especialidad = 'Medicina familiar' ORDER BY SIZE(m.pacientesAsignados) ASC")
     List<Medico> getMedicoFamiliarWithLessAsignations();
 
+    @Query(value = "SELECT m FROM Medico m WHERE m.especialidad = :especialidad ORDER BY SIZE(m.pacientesAsignados) ASC")
+    List<Medico> getMedicoByEspecialidadWithLessAsignations(String especialidad);
+
     Optional<Medico> findByEmail(String email);
 
     List<Medico> getAllByActivoFalse();

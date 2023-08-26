@@ -22,4 +22,5 @@ public class SolicitudConsultaOutDto {
     private PacienteOutDto pacienteOutDto;
     private MedicoOutDto medicoOutDto;
     private int numArchivos;
+    private boolean pruebasBoolean;
 }
