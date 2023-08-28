@@ -171,7 +171,7 @@ public class DtoToEntityConverter {
         paciente.setId(pacienteOutDto.getId());
         paciente.setNombre(pacienteOutDto.getNombre());
         paciente.setApellidos(pacienteOutDto.getApellidos());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fechaNaciemiento = LocalDate.parse(pacienteOutDto.getFechaNacimiento(), formatter);
         paciente.setFechaNacimiento(fechaNaciemiento);
         paciente.setDni(pacienteOutDto.getDni());

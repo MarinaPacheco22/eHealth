@@ -127,8 +127,8 @@ public class PacienteController {
     public ResponseEntity<?> create(@RequestBody PacienteOutDto pacienteOutDto) {
         ResponseEntity<?> toReturn;
         try {
-            pacienteService.create(pacienteOutDto);
-            toReturn = new ResponseEntity<>(HttpStatus.CREATED);
+            Long id = pacienteService.create(pacienteOutDto);
+            toReturn = new ResponseEntity<>(id, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             logger.warn(e.getMessage(), e);
             toReturn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);

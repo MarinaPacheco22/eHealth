@@ -70,7 +70,7 @@ public class PacienteService {
         return byEmail.get();
     }
 
-    public void create(PacienteOutDto outDto) {
+    public Long create(PacienteOutDto outDto) {
         String email = outDto.getEmail();
         Optional<Medico> medicoByEmail= medicoRepository.findByEmail(email);
         Optional<Paciente> pacienteByEmail = pacienteRepository.findByEmail(email);
@@ -85,7 +85,8 @@ public class PacienteService {
         historialClinico.setPaciente(pacienteCreated);
         HistorialClinico historialClinicoCreated = historialClinicoRepository.save(historialClinico);
         pacienteCreated.setHistorialClinico(historialClinicoCreated);
-        pacienteRepository.save(pacienteCreated);
+        Paciente created = pacienteRepository.save(pacienteCreated);
+        return created.getId();
     }
 
     @Transactional
